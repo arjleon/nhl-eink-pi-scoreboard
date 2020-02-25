@@ -1,0 +1,73 @@
+{
+  "copyright": "NHL and the NHL Shield are registered trademarks of the National Hockey League. NHL and NHL team marks are the property of the NHL and its teams. © NHL 2020. All Rights Reserved.",
+  "totalItems": 14,
+  "totalEvents": 0,
+  "totalGames": 14,
+  "totalMatches": 0,
+  "wait": 10,
+  "dates": [
+    {
+      "date": "2020-02-01",
+      "totalItems": 14,
+      "totalEvents": 0,
+      "totalGames": 14,
+      "totalMatches": 0,
+      "games": [
+        {
+          "gamePk": 2019020792,
+          "link": "/api/v1/game/2019020792/feed/live",
+          "gameType": "R",
+          "season": "20192020",
+          "gameDate": "2020-02-01T18:00:00Z",
+          "status": {
+            "abstractGameState": "Live",
+            "codedGameState": "4",
+            "detailedState": "In Progress - Critical",
+            "statusCode": "4",
+            "startTimeTBD": false
+          },
+          "teams": {
+            "away": {
+              "leagueRecord": {
+                "wins": 27,
+                "losses": 16,
+                "ot": 8,
+                "type": "league"
+              },
+              "score": 1,
+              "team": {
+                "id": 29,
+                "name": "Columbus Blue Jackets",
+                "link": "/api/v1/teams/29"
+              }
+            },
+            "home": {
+              "leagueRecord": {
+                "wins": 22,
+                "losses": 22,
+                "ot": 7,
+                "type": "league"
+              },
+              "score": 1,
+              "team": {
+                "id": 7,
+                "name": "Buffalo Sabres",
+                "link": "/api/v1/teams/7"
+              }
+            }
+          },
+          "venue": {
+            "id": 5039,
+            "name": "KeyBank Center",
+            "link": "/api/v1/venues/5039"
+          },
+          "content": {
+            "link": "/api/v1/game/2019020792/content"
+          }
+        }
+      ],
+      "events": [],
+      "matches": []
+    }
+  ]
+}

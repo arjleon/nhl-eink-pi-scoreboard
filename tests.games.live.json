@@ -1,0 +1,72 @@
+{
+  "copyright": "NHL and the NHL Shield are registered trademarks of the National Hockey League. NHL and NHL team marks are the property of the NHL and its teams. © NHL 2020. All Rights Reserved.",
+  "totalItems": 14,
+  "totalEvents": 0,
+  "totalGames": 14,
+  "totalMatches": 0,
+  "wait": 10,
+  "dates": [
+    {
+      "date": "2020-02-01",
+      "totalItems": 14,
+      "totalEvents": 0,
+      "totalGames": 14,
+      "totalMatches": 0,
+      "games": [
+        {
+          "gamePk": 2019020794,
+          "link": "/api/v1/game/2019020794/feed/live",
+          "gameType": "R",
+          "season": "20192020",
+          "gameDate": "2020-02-01T19:00:00Z",
+          "status": {
+            "abstractGameState": "Live",
+            "codedGameState": "3",
+            "detailedState": "In Progress",
+            "statusCode": "3",
+            "startTimeTBD": false
+          },
+          "teams": {
+            "away": {
+              "leagueRecord": {
+                "wins": 28,
+                "losses": 16,
+                "ot": 5,
+                "type": "league"
+              },
+              "score": 0,
+              "team": {
+                "id": 13,
+                "name": "Florida Panthers",
+                "link": "/api/v1/teams/13"
+              }
+            },
+            "home": {
+              "leagueRecord": {
+                "wins": 23,
+                "losses": 22,
+                "ot": 7,
+                "type": "league"
+              },
+              "score": 2,
+              "team": {
+                "id": 8,
+                "name": "Montréal Canadiens",
+                "link": "/api/v1/teams/8"
+              }
+            }
+          },
+          "venue": {
+            "name": "Centre Bell",
+            "link": "/api/v1/venues/null"
+          },
+          "content": {
+            "link": "/api/v1/game/2019020794/content"
+          }
+        }
+      ],
+      "events": [],
+      "matches": []
+    }
+  ]
+}

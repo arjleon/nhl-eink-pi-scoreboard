@@ -1,0 +1,73 @@
+{
+  "copyright": "NHL and the NHL Shield are registered trademarks of the National Hockey League. NHL and NHL team marks are the property of the NHL and its teams. © NHL 2020. All Rights Reserved.",
+  "totalItems": 14,
+  "totalEvents": 0,
+  "totalGames": 14,
+  "totalMatches": 0,
+  "wait": 10,
+  "dates": [
+    {
+      "date": "2020-02-01",
+      "totalItems": 14,
+      "totalEvents": 0,
+      "totalGames": 14,
+      "totalMatches": 0,
+      "games": [
+        {
+          "gamePk": 2019020799,
+          "link": "/api/v1/game/2019020799/feed/live",
+          "gameType": "R",
+          "season": "20192020",
+          "gameDate": "2020-02-02T00:00:00Z",
+          "status": {
+            "abstractGameState": "Preview",
+            "codedGameState": "1",
+            "detailedState": "Scheduled",
+            "statusCode": "1",
+            "startTimeTBD": false
+          },
+          "teams": {
+            "away": {
+              "leagueRecord": {
+                "wins": 31,
+                "losses": 13,
+                "ot": 8,
+                "type": "league"
+              },
+              "score": 0,
+              "team": {
+                "id": 19,
+                "name": "St. Louis Blues",
+                "link": "/api/v1/teams/19"
+              }
+            },
+            "home": {
+              "leagueRecord": {
+                "wins": 25,
+                "losses": 23,
+                "ot": 4,
+                "type": "league"
+              },
+              "score": 0,
+              "team": {
+                "id": 52,
+                "name": "Winnipeg Jets",
+                "link": "/api/v1/teams/52"
+              }
+            }
+          },
+          "venue": {
+            "id": 5058,
+            "name": "Bell MTS Place",
+            "link": "/api/v1/venues/5058"
+          },
+          "content": {
+            "link": "/api/v1/game/2019020799/content"
+          }
+        }
+      ],
+      "events": [],
+      "matches": []
+    }
+  ]
+}
