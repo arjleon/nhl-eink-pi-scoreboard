@@ -3,8 +3,10 @@
 import sys
 import os
 
-imgs = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'img')
-lib = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+#imgs = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'img')
+imgs = 'img'
+#lib = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+lib = 'lib'
 if os.path.exists(lib):
     sys.path.append(lib)
 
