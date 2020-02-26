@@ -1,11 +1,25 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+import sys
+import os
+
+imgs = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'img')
+lib = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+if os.path.exists(lib):
+    sys.path.append(lib)
+
 import constants
 from datetime import datetime, timedelta
+from PIL import Image,ImageDraw,ImageFont
 import json
 import requests
 from os import path
 from time import sleep
 from game import Game, GameStatus
 import utils
+from waveshare_epd import epd2in9bc
+import logging
+import time
 
 
 def write_file(filename, content):
@@ -92,6 +106,38 @@ def print_game_info(g, daysahead):
 
 
 id_to_abbr = get_abbreviations(get_teams())
-team_id = get_team_id('VGK')
-game, days_ahead = get_next_game(team_id, datetime.today() - timedelta(days=1))
-print_game_info(game, days_ahead)
+#team_id = get_team_id('VGK')
+#game, days_ahead = get_next_game(team_id, datetime.today() - timedelta(days=1))
+#print_game_info(game, days_ahead)
+
+def test_display():
+    logging.basicConfig(level=logging.DEBUG)
+    epd = epd2in9bc.EPD()
+
+    logging.info("init and Clear")
+    epd.init()
+    epd.Clear()
+    time.sleep(1)
+
+    font24 = ImageFont.truetype(os.path.join(imgs, 'Font.ttc'), 24)
+    # font18 = ImageFont.truetype(os.path.join(imgs, 'Font.ttc'), 18)
+
+    logging.info("Drawing")
+    b = Image.new('1', (epd.height, epd.width), 255)
+    canvas_b = ImageDraw.Draw(b)
+    canvas_b.text((20, 20), 'Golden Knights', font=font24, fill=0)
+
+    ry = Image.new('1', (epd.height, epd.width), 255)
+
+    epd.display(epd.getbuffer(b), epd.getbuffer(ry))
+    time.sleep(4)
+
+    logging.info("Clear...")
+    epd.init()
+    epd.Clear()
+
+    logging.info("Goto Sleep...")
+    epd.sleep()
+
+
+test_display()
