@@ -59,11 +59,12 @@ class Display:
     def __new_image(self):
         return Image.new('1', (self.epd.height, self.epd.width), 255)
 
-    def __new_canvas(self, image):
+    @staticmethod
+    def __new_canvas(image):
         return ImageDraw.Draw(image)
 
     def __update(self, b, ry):
         if self.epd and b and ry:
             self.epd.display(self.epd.getbuffer(b), self.epd.getbuffer(ry))
-        else
+        else:
             self.log.error(f'Missing requirements for the display: ({self.epd}, {b}, {ry})')
