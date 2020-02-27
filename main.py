@@ -3,11 +3,10 @@
 import sys
 import os
 
-imgs = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'img')
-lib = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib')
-print(f'Lib location: {lib}')
-if os.path.exists(lib):
-    sys.path.append(lib)
+imgs = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'imgs')
+libs = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'libs')
+if os.path.exists(libs):
+    sys.path.append(libs)
 
 import constants
 from datetime import datetime, timedelta
