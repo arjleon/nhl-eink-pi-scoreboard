@@ -17,6 +17,7 @@ from game import Game
 class Display:
     def __init__(self):
         self.epd = epd2in9bc.EPD()
+        self.size = (self.epd.height, self.epd.height)
         self.log = logging
         self.log.basicConfig(level=logging.DEBUG)
         self.is_initialized = False
@@ -52,21 +53,25 @@ class Display:
     def show_finished_game(self, g: Game, away_abbr, home_abbr):
 
         b = self.__new_image()
-        canvas_b = self.__new_canvas(b)
         ry = self.__new_image()
-
-        self.__center_text(canvas_b, f'{g.away.score} - {g.home.score}', font=self.font_big)
-        self.__center_text(canvas_b, 'Final', offset=(0, 30), font=self.font_big)
 
         (away_b, away_ry) = self.__get_team_icons(away_abbr)
         (home_b, home_ry) = self.__get_team_icons(home_abbr)
 
-        b.paste(away_b, (20, 20))
-        b.paste(home_b, (self.epd.width - 20, 20))
+        left = 8
+        right = self.size[0] - left
+        top = 10
+
+        b.paste(away_b, (left, top))
+        b.paste(home_b, (right, top))
         if away_ry:
-            ry.paste(away_ry, (20, 20))
+            ry.paste(away_ry, (left, top))
         if home_ry:
-            ry.paste(home_ry, (self.epd.width - 20, 20))
+            ry.paste(home_ry, (right, top))
+
+        canvas_b = self.__new_canvas(b)
+        self.__center_text(canvas_b, f'{g.away.score} - {g.home.score}', font=self.font_big)
+        self.__center_text(canvas_b, 'Final', offset=(0, 30), font=self.font_big)
 
         self.__update(b, ry)
 
