@@ -1,8 +1,3 @@
-# noinspection PyUnresolvedReferences
-from waveshare_epd import epd2in9bc
-import logging
-from time import sleep
-from PIL import Image, ImageDraw, ImageFont
 import os
 import sys
 
@@ -10,6 +5,12 @@ libraries = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'libs')
 if os.path.exists(libraries):
     sys.path.append(libraries)
 images = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'imgs')
+
+# noinspection PyUnresolvedReferences
+from waveshare_epd import epd2in9bc
+import logging
+from time import sleep
+from PIL import Image, ImageDraw, ImageFont
 
 
 class Display:
