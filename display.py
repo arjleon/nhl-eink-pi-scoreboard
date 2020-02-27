@@ -59,7 +59,7 @@ class Display:
         (home_b, home_ry) = self.__get_team_icons(home_abbr)
 
         # Margin proportional to display size
-        base_margin = 0.03 * self.size[0]
+        base_margin = int(0.03 * self.size[0])
         # Away/left icon: left based on margin, and center vertically based on b image
         away_xy = (base_margin, (self.size[1] - away_b.size[1])/2)
         # Home/right icon: left based on display size - image width - margin, and center vertically based on b image
