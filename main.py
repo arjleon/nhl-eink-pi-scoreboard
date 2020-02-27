@@ -66,7 +66,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
     while loop < constants.NEXT_GAME_CHECK_LIMIT:
         team_arg = f'teamId={tid}'
         date_arg = f'date={date_time.strftime(constants.API_DATE_FORMAT)}'
-        response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg))
+        response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=60)
         data = json.loads(response.content)
         count = data['totalGames']
         if count > 0:
