@@ -61,9 +61,9 @@ class Display:
         # Margin proportional to display size
         base_margin = int(0.03 * self.size[0])
         # Away/left icon: left based on margin, and center vertically based on b image
-        away_xy = (base_margin, (self.size[1] - away_b.size[1])/2)
+        away_xy = (int(base_margin), int((self.size[1] - away_b.size[1])/2))
         # Home/right icon: left based on display size - image width - margin, and center vertically based on b image
-        home_xy = (self.size[0] - home_b.size[0] - base_margin, (self.size[1] - home_b.size[1])/2)
+        home_xy = (int(self.size[0] - home_b.size[0] - base_margin), int((self.size[1] - home_b.size[1])/2))
 
         b.paste(away_b, away_xy)
         b.paste(home_b, home_xy)
