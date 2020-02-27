@@ -84,7 +84,7 @@ def print_game_info(g, daysahead):
 
     if g.status == GameStatus.FINAL:
         expanded_status = 'Final: %d - %d' % (g.away.score, g.home.score)
-        display.show_finished_game(g.away.score, g.home.score)
+        display.show_finished_game(g, 'edm', 'vgk')
     else:
         day, time = utils.get_friendly_local_date(g, daysahead)
         expanded_status = f'{day} {time}'

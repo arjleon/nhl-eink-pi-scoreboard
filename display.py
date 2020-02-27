@@ -4,13 +4,14 @@ import sys
 libraries = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'libs')
 if os.path.exists(libraries):
     sys.path.append(libraries)
-images = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'imgs')
+res = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
 
 # noinspection PyUnresolvedReferences
 from waveshare_epd import epd2in9bc
 import logging
 from time import sleep
 from PIL import Image, ImageDraw, ImageFont
+from game import Game
 
 
 class Display:
@@ -19,7 +20,7 @@ class Display:
         self.log = logging
         self.log.basicConfig(level=logging.DEBUG)
         self.is_initialized = False
-        self.font_big = ImageFont.truetype(os.path.join(images, 'Font.ttc'), 24)
+        self.font_big = ImageFont.truetype(os.path.join(res, 'Font.ttc'), 24)
 
     def start(self):
         if self.is_initialized:
@@ -47,13 +48,25 @@ class Display:
             self.epd.Clear()
             sleep(1)
 
-    def show_finished_game(self, score_away, score_home):
+# TODO: Should abbreviations be part of Game's Team objects? Display stages filling gaps before drawing?
+    def show_finished_game(self, g: Game, away_abbr, home_abbr):
+
         b = self.__new_image()
         canvas_b = self.__new_canvas(b)
-        self.__center_text(canvas_b, f'{score_away} - {score_home}', font=self.font_big)
+        ry = self.__new_image()
+
+        self.__center_text(canvas_b, f'{g.away.score} - {g.home.score}', font=self.font_big)
         self.__center_text(canvas_b, 'Final', offset=(0, 30), font=self.font_big)
 
-        ry = self.__new_image()
+        (away_b, away_ry) = self.__get_team_icons(away_abbr)
+        (home_b, home_ry) = self.__get_team_icons(home_abbr)
+
+        b.paste(away_b, (20, 20))
+        b.paste(home_b, (self.epd.width - 20, 20))
+        if away_ry:
+            ry.paste(away_ry, (20, 20))
+        if home_ry:
+            ry.paste(home_ry, (self.epd.width - 20, 20))
 
         self.__update(b, ry)
 
@@ -63,6 +76,27 @@ class Display:
     @staticmethod
     def __new_canvas(image):
         return ImageDraw.Draw(image)
+
+    @staticmethod
+    def __get_team_icons(abbr):
+        ext = '.gif'
+
+        b_path = os.path.join(res, f'{abbr}-b{ext}')
+        b = None
+        if os.path.exists(b_path):
+            b = Image.open(b_path)
+
+        ry_path = os.path.join(res, f'{abbr}-ry{ext}')
+        ry = None
+        if os.path.exists(ry_path):
+            ry = Image.open(ry_path)
+
+        return b, ry
+
+
+
+
+
 
     @staticmethod
     def __center_text(canvas: ImageDraw, text, offset: tuple = (0, 0), font=None, fill=0):
