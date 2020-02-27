@@ -50,8 +50,8 @@ class Display:
     def show_finished_game(self, score_away, score_home):
         b = self.__new_image()
         canvas_b = self.__new_canvas(b)
-        canvas_b.text((20, 20), f'{score_away} - {score_home}', font=self.font_big, fill=0)
-        canvas_b.text((20, 50), 'Final', font=self.font_big, fill=0)
+        self.__center_text(canvas_b, f'{score_away} - {score_home}', font=self.font_big)
+        self.__center_text(canvas_b, 'Final', offset=(0, 30), font=self.font_big)
 
         ry = self.__new_image()
 
@@ -63,6 +63,13 @@ class Display:
     @staticmethod
     def __new_canvas(image):
         return ImageDraw.Draw(image)
+
+    @staticmethod
+    def __center_text(canvas: ImageDraw, text, offset: tuple = (0, 0), font=None, fill=0):
+        (cw, ch) = canvas.im.size
+        (tw, th) = canvas.textsize(text=text, font=font)
+        (x, y) = (((cw-tw)/2) + offset[0], ((ch-th)/2) + offset[1])
+        canvas.text((x, y), text, font=font, fill=0)
 
     def __update(self, b, ry):
         if self.epd and b and ry:
