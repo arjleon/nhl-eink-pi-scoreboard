@@ -94,14 +94,15 @@ def print_game_info(g, daysahead):
     print(f'({away_record}) {id_to_abbr[g.away.id]} @ {id_to_abbr[g.home.id]} ({home_record})\n{expanded_status}')
 
 
+id_to_abbr = get_abbreviations(get_teams())
+team_id = get_team_id('VGK')
+game, days_ahead = get_next_game(team_id, datetime.today() - timedelta(days=1))
+
 display = Display()
 display.start()
 display.clear()
 
-id_to_abbr = get_abbreviations(get_teams())
-team_id = get_team_id('VGK')
-game, days_ahead = get_next_game(team_id, datetime.today() - timedelta(days=1))
-print_game_info(game, days_ahead)
-
-display.clear()
-display.stop()
+try:
+    print_game_info(game, days_ahead)
+finally:
+    display.stop()
