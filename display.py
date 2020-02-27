@@ -17,7 +17,7 @@ from game import Game
 class Display:
     def __init__(self):
         self.epd = epd2in9bc.EPD()
-        self.size = (self.epd.height, self.epd.height)
+        self.size = (self.epd.height, self.epd.width)  # Display always used horizontal (H x W)
         self.log = logging
         self.log.basicConfig(level=logging.DEBUG)
         self.is_initialized = False
@@ -58,16 +58,20 @@ class Display:
         (away_b, away_ry) = self.__get_team_icons(away_abbr)
         (home_b, home_ry) = self.__get_team_icons(home_abbr)
 
-        left = 8
-        right = self.size[0] - left
-        top = 10
+        # Margin proportional to display size
+        base_margin = 0.03 * self.size[0]
+        # Away/left icon: left based on margin, and center vertically based on b image
+        away_xy = (base_margin, (self.size[1] - away_b.size[1])/2)
+        # Home/right icon: left based on display size - image width - margin, and center vertically based on b image
+        home_xy = (self.size[0] - home_b.size[0] - base_margin, (self.size[1] - home_b.size[1])/2)
 
-        b.paste(away_b, (left, top))
-        b.paste(home_b, (right, top))
+        b.paste(away_b, away_xy)
+        b.paste(home_b, home_xy)
+        # Code will assume b and ry images are the same size; reusing measured positions
         if away_ry:
-            ry.paste(away_ry, (left, top))
+            ry.paste(away_ry, away_xy)
         if home_ry:
-            ry.paste(home_ry, (right, top))
+            ry.paste(home_ry, home_xy)
 
         canvas_b = self.__new_canvas(b)
         self.__center_text(canvas_b, f'{g.away.score} - {g.home.score}', font=self.font_big)
@@ -97,11 +101,6 @@ class Display:
             ry = Image.open(ry_path)
 
         return b, ry
-
-
-
-
-
 
     @staticmethod
     def __center_text(canvas: ImageDraw, text, offset: tuple = (0, 0), font=None, fill=0):
