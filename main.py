@@ -107,5 +107,6 @@ display.clear()
 
 try:
     canvas = UpcomingGameCanvas(display, font_provider, game, icon_provider, days_delta)
+    canvas.draw()
 finally:
     display.stop()
