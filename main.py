@@ -82,12 +82,14 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
 
 def print_game_info(g, daysahead):
 
+    day, time = utils.get_friendly_local_date(g, daysahead)
+    expanded_status = f'{day} {time}'
+
     if g.status == GameStatus.FINAL:
         expanded_status = 'Final: %d - %d' % (g.away.score, g.home.score)
         display.show_finished_game(g, 'edm', 'vgk')
     else:
-        day, time = utils.get_friendly_local_date(g, daysahead)
-        expanded_status = f'{day} {time}'
+
 
     home_record = '%d-%d-%d' % (g.home.wins, g.home.losses, g.home.ot)
     away_record = '%d-%d-%d' % (g.away.wins, g.away.losses, g.away.ot)

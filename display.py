@@ -21,7 +21,8 @@ class Display:
         self.log = logging
         self.log.basicConfig(level=logging.DEBUG)
         self.is_initialized = False
-        self.font_big = ImageFont.truetype(os.path.join(res, 'Font.ttc'), 24)
+        self.font_big = ImageFont.truetype(os.path.join(res, 'Font.ttc'), 52)
+        self.font_normal = ImageFont.truetype(os.path.join(res, 'Font.ttc'), 20)
 
     def start(self):
         if self.is_initialized:
@@ -74,8 +75,8 @@ class Display:
             ry.paste(home_ry, home_xy)
 
         canvas_b = self.__new_canvas(b)
-        self.__center_text(canvas_b, f'{g.away.score} - {g.home.score}', font=self.font_big)
-        self.__center_text(canvas_b, 'Final', offset=(0, 30), font=self.font_big)
+        self.__center_text(canvas_b, f'{g.away.score}-{g.home.score}', font=self.font_big)
+        self.__center_text(canvas_b, 'Final', offset=(0, self.font_normal.size), font=self.font_normal)
 
         self.__update(b, ry)
 

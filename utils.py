@@ -8,6 +8,6 @@ def get_friendly_local_date(g, days_ahead, to_tz=None):
     time_local_str = re.sub('^0', '', time_local_str)
     # Next few lines will get a readable string for when the game is, otherwise mm/dd
     days = {0: 'Today', 1: 'Tomorrow'}
-    days_default = datetime_local.strftime('%b/%d')
+    days_default = datetime_local.strftime('%a, %b/%d')
     day = days.get(days_ahead, days_default)
     return day, time_local_str

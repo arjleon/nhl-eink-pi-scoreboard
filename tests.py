@@ -69,7 +69,7 @@ class MyTestCase(unittest.TestCase):
     def test_friendly_day_mmdd(self):
         g = get_game_from_file('tests.games.scheduled.json')
         day, time = utils.get_friendly_local_date(g, 2)
-        self.assertEqual('Feb/01', day)
+        self.assertEqual('Sat, Feb/01', day)
 
     # def test_friendly_time(self): # Test time conversion passing an overriding timezone
 
