@@ -20,7 +20,7 @@ class TeamIconProvider:
         self.icons_path = icons_path
 
     def get_team_icon_path(self, tid):
-        abbr = self.id_to_abbr[tid]
+        abbr = self.id_to_abbr[tid].lower()
         ext = '.gif'
         b_path = path.join(self.icons_path, f'{abbr}-b{ext}')
         ry_path = path.join(self.icons_path, f'{abbr}-ry{ext}')
