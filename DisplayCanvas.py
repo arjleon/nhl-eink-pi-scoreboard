@@ -10,7 +10,7 @@ class BaseDisplayCanvas(object):
     def __init__(self, display: Display, font_provider: FontProvider):
         self.display = display
         self.font_provider = font_provider
-        self.size_to_font = []
+        self.size_to_font = dict()
         self.b = self.__new_image()
         self.ry = self.__new_image()
 
