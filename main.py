@@ -4,11 +4,12 @@ import constants
 from datetime import datetime, timedelta
 import json
 import requests
-from os import path
+import os
 from time import sleep
 from game import Game, GameStatus
 from display import Display
-import utils
+from utils import TeamIconProvider, FontProvider
+from DisplayCanvas import UpcomingGameCanvas
 
 
 def write_file(filename, content):
@@ -80,29 +81,31 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
     raise Exception(f'({loop}) Error, could not find the next match')
 
 
-def print_game_info(g, daysahead):
-
-    day, time = utils.get_friendly_local_date(g, daysahead)
-    expanded_status = f'{day} {time}'
-
-    if g.status == GameStatus.FINAL:
-        expanded_status = 'Final: %d - %d' % (g.away.score, g.home.score)
-        display.show_finished_game(g, 'edm', 'vgk')
-
-    home_record = '%d-%d-%d' % (g.home.wins, g.home.losses, g.home.ot)
-    away_record = '%d-%d-%d' % (g.away.wins, g.away.losses, g.away.ot)
-    print(f'({away_record}) {id_to_abbr[g.away.id]} @ {id_to_abbr[g.home.id]} ({home_record})\n{expanded_status}')
-
+# def print_game_info(g, daysahead):
+#
+#     day, time = utils.get_friendly_local_date(g, daysahead)
+#     expanded_status = f'{day} {time}'
+#
+#     if g.status == GameStatus.FINAL:
+#         expanded_status = 'Final: %d - %d' % (g.away.score, g.home.score)
+#         display.show_finished_game(g, 'edm', 'vgk')
+#
+#     home_record = '%d-%d-%d' % (g.home.wins, g.home.losses, g.home.ot)
+#     away_record = '%d-%d-%d' % (g.away.wins, g.away.losses, g.away.ot)
+#     print(f'({away_record}) {id_to_abbr[g.away.id]} @ {id_to_abbr[g.home.id]} ({home_record})\n{expanded_status}')
 
 id_to_abbr = get_abbreviations(get_teams())
+resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
+font_provider = FontProvider(resources_path)
+icon_provider = TeamIconProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
-game, days_ahead = get_next_game(team_id, datetime.today() - timedelta(days=1))
+game, days_delta = get_next_game(team_id, datetime.today())  # - timedelta(days=1)
 
 display = Display()
 display.start()
 display.clear()
 
 try:
-    print_game_info(game, days_ahead)
+    canvas = UpcomingGameCanvas(display, font_provider, game, icon_provider, days_delta)
 finally:
     display.stop()

@@ -1,4 +1,5 @@
 import re
+from os import path
 
 
 def get_friendly_local_date(g, days_ahead, to_tz=None):
@@ -11,3 +12,23 @@ def get_friendly_local_date(g, days_ahead, to_tz=None):
     days_default = datetime_local.strftime('%a, %b/%d')
     day = days.get(days_ahead, days_default)
     return day, time_local_str
+
+
+class TeamIconProvider:
+    def __init__(self, id_to_abbr: dict, icons_path: str):
+        self.id_to_abbr = id_to_abbr
+        self.icons_path = icons_path
+
+    def get_team_icon_path(self, abbr):
+        ext = '.gif'
+        b_path = path.join(self.icons_path, f'{abbr}-b{ext}')
+        ry_path = path.join(self.icons_path, f'{abbr}-ry{ext}')
+        return b_path, ry_path
+
+
+class FontProvider:
+    def __init__(self, fonts_path: str):
+        self.fonts_path = fonts_path
+
+    def get_font_path(self):
+        return self.fonts_path
