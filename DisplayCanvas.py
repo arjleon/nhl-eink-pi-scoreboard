@@ -15,8 +15,7 @@ class BaseDisplayCanvas(object):
         self.ry = self.__new_image()
 
     def __new_image(self):
-        # New image will take in height (index 1) and width (index 0) for horizontal orientation:
-        return Image.new('1', (self.display.size[1], self.display.size[0]), 255)
+        return Image.new('1', (self.display.size[0], self.display.size[1]), 255)
 
     def get_font_by_size(self, size: int):
         key = str(size)
