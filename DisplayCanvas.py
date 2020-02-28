@@ -19,10 +19,11 @@ class BaseDisplayCanvas(object):
         return Image.new('1', (self.display.size[1], self.display.size[0]), 255)
 
     def get_font_by_size(self, size: int):
-        if self.size_to_font[size] is None:
+        key = str(size)
+        if self.size_to_font[key] is None:
             filename = os.path.join(self.font_provider.get_font_path(), 'Font.ttc')
-            self.size_to_font[size] = ImageFont.truetype(filename, size)
-        return self.size_to_font[size]
+            self.size_to_font[key] = ImageFont.truetype(filename, size)
+        return self.size_to_font[key]
 
     @staticmethod
     def get_center_left(canvas_wh: tuple, obj_size_wh: tuple, margin):
