@@ -99,7 +99,7 @@ resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res'
 font_provider = FontProvider(resources_path)
 icon_provider = TeamIconProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
-game, days_delta = get_next_game(team_id, datetime.today())  # - timedelta(days=1)
+game, days_delta = get_next_game(team_id, datetime.today() + timedelta(days=6))  # - timedelta(days=1)
 
 display = Display()
 display.start()
