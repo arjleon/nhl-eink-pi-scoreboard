@@ -31,7 +31,7 @@ def get_url(endpoint, *args):
 
 def get_teams():
     filename = constants.FILE_TEAMS + '.json'
-    if path.exists(filename):
+    if os.path.exists(filename):
         print('Teams data exists')
         return json.loads(read_file(filename))
     else:
