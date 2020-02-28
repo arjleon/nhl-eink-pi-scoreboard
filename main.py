@@ -88,8 +88,6 @@ def print_game_info(g, daysahead):
     if g.status == GameStatus.FINAL:
         expanded_status = 'Final: %d - %d' % (g.away.score, g.home.score)
         display.show_finished_game(g, 'edm', 'vgk')
-    else:
-
 
     home_record = '%d-%d-%d' % (g.home.wins, g.home.losses, g.home.ot)
     away_record = '%d-%d-%d' % (g.away.wins, g.away.losses, g.away.ot)
