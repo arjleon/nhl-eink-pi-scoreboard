@@ -69,7 +69,8 @@ class UpcomingGameCanvas(BaseDisplayCanvas):
             away_icon_ry = Image.open(away_icon_ry_path)
             self.ry.paste(away_icon_ry, away_icon_xy)
 
-        friendly_date = get_friendly_local_date(game, days_delta)
+        day, time_local_str = get_friendly_local_date(game, days_delta)
+        friendly_date = f'{day}, {time_local_str}'
 
         date_font = super().get_font_by_size(15)
         canvas_b = ImageDraw.Draw(self.b)
