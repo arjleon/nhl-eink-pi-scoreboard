@@ -80,19 +80,19 @@ class ScheduledGameCanvas(DisplayCanvas):
         day, time_local_str = get_friendly_local_date(game, days_delta)
         friendly_date = f'{day}\n{time_local_str}'
 
-        date_font = super().get_font_by_size(15)
+        date_font = super().get_font_by_size(18)
         canvas_b = ImageDraw.Draw(self.b)
         date_xy = super().get_center(self.display.size, canvas_b.textsize(friendly_date, date_font))
-        canvas_b.text(date_xy, friendly_date, font=date_font)
+        canvas_b.multiline_text(date_xy, friendly_date, font=date_font, align='center')
 
-        record_font = super().get_font_by_size(14)
+        record_font = super().get_font_by_size(15)
 
-        away_record = f'{game.away.wins}-{game.away.losses}-{game.away.ot}'
+        away_record = f'({game.away.wins}-{game.away.losses}-{game.away.ot})'
         away_record_size = canvas_b.textsize(away_record, record_font)
         away_record_xy = (0, display.size[1] - away_record_size[1])
         canvas_b.text(away_record_xy, away_record, font=record_font)
 
-        home_record = f'{game.home.wins}-{game.home.losses}-{game.home.ot}'
+        home_record = f'({game.home.wins}-{game.home.losses}-{game.home.ot})'
         home_record_size = canvas_b.textsize(home_record, record_font)
         home_record_xy = (display.size[0] - home_record_size[0], display.size[1] - home_record_size[1])
         canvas_b.text(home_record_xy, home_record, font=record_font)
@@ -103,7 +103,7 @@ class UnexpectedGameCanvas(DisplayCanvas):
     def __init__(self, display: Display, font_provider: FontProvider, game: Game):
         super().__init__(display, font_provider)
 
-        error_font_size = 12
+        error_font_size = 16
         error_font = super().get_font_by_size(error_font_size)
         error_str = f'Unexpected game (status={game.status})'
         error_xy = (0, display.size[1] - error_font_size)
