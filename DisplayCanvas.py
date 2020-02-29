@@ -108,7 +108,6 @@ class ScheduledGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
 
     def __init__(self, display: Display, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider, days_delta: int):
-        # Init for each base class
         super().__init__(display, font_provider, game, icon_provider)
         super().__init__(display, font_provider, game)
 
@@ -119,11 +118,12 @@ class ScheduledGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
         self.canvas_b.multiline_text(text_xy, text, font=text_font, align='center')
 
 
-class FinalGameCanvas(__BaseLogosCanvas):
+class FinalGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
 
     def __init__(self, display: Display, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
         super().__init__(display, font_provider, game, icon_provider)
+        super().__init__(display, font_provider, game)
 
         at = "@"
         at_font = super().get_font_by_size(20)
@@ -131,7 +131,7 @@ class FinalGameCanvas(__BaseLogosCanvas):
         self.canvas_b.text(at_xy, at, font=at_font)
 
         score_font = super().get_font_by_size(70)
-        score_offset = int(0.05 * display.size[0])
+        score_offset = int(0.04 * display.size[0])
         display_center = super().get_center(display.size, (0, 0))
 
         away_score_size = self.canvas_b.textsize(str(game.away.score), score_font)
