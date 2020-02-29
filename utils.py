@@ -17,7 +17,7 @@ def get_friendly_local_date(g, days_ahead, to_tz=None):
 class TeamIconProvider:
     def __init__(self, id_to_abbr: dict, icons_path: str):
         self.id_to_abbr = id_to_abbr
-        self.icons_path = icons_path
+        self.icons_path = path.join(icons_path, 'logos')
 
     def get_team_icon_path(self, tid):
         abbr = self.id_to_abbr[tid].lower()
