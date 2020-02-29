@@ -56,6 +56,11 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(g.status, GameStatus.LIVE_CRITICAL)
         self.assertFalse(g.is_time_tbd)
 
+    def test_json_final_game(self):
+        g = get_game_from_file('tests.games.final.json')
+        self.assertEqual(g.status, GameStatus.FINAL)
+        self.assertFalse(g.is_time_tbd)
+
     def test_friendly_day_today(self):
         g = get_game_from_file('tests.games.scheduled.json')
         day, time, tz = utils.get_friendly_local_date(g, 0)

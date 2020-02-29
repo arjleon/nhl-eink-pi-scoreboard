@@ -6,37 +6,37 @@
   "totalMatches" : 0,
   "wait" : 10,
   "dates" : [ {
-    "date" : "2020-03-01",
+    "date" : "2020-02-28",
     "totalItems" : 1,
     "totalEvents" : 0,
     "totalGames" : 1,
     "totalMatches" : 0,
     "games" : [ {
-      "gamePk" : 2019021016,
-      "link" : "/api/v1/game/2019021016/feed/live",
+      "gamePk" : 2019020997,
+      "link" : "/api/v1/game/2019020997/feed/live",
       "gameType" : "R",
       "season" : "20192020",
-      "gameDate" : "2020-03-02T03:30:00Z",
+      "gameDate" : "2020-02-29T03:00:00Z",
       "status" : {
-        "abstractGameState" : "Preview",
-        "codedGameState" : "1",
-        "detailedState" : "Scheduled",
-        "statusCode" : "1",
+        "abstractGameState" : "Final",
+        "codedGameState" : "7",
+        "detailedState" : "Final",
+        "statusCode" : "7",
         "startTimeTBD" : false
       },
       "teams" : {
         "away" : {
           "leagueRecord" : {
-            "wins" : 23,
-            "losses" : 35,
-            "ot" : 6,
+            "wins" : 29,
+            "losses" : 27,
+            "ot" : 8,
             "type" : "league"
           },
-          "score" : 0,
+          "score" : 2,
           "team" : {
-            "id" : 26,
-            "name" : "Los Angeles Kings",
-            "link" : "/api/v1/teams/26"
+            "id" : 7,
+            "name" : "Buffalo Sabres",
+            "link" : "/api/v1/teams/7"
           }
         },
         "home" : {
@@ -46,7 +46,7 @@
             "ot" : 8,
             "type" : "league"
           },
-          "score" : 0,
+          "score" : 4,
           "team" : {
             "id" : 54,
             "name" : "Vegas Golden Knights",
@@ -60,7 +60,7 @@
         "link" : "/api/v1/venues/5178"
       },
       "content" : {
-        "link" : "/api/v1/game/2019021016/content"
+        "link" : "/api/v1/game/2019020997/content"
       }
     } ],
     "events" : [ ],

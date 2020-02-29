@@ -69,7 +69,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
         date_arg = f'date={date_time.strftime(constants.API_DATE_FORMAT)}'
         #response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=(60, 60))
         #data = json.loads(response.content)
-        f = open('dummy-03-01-game.json')
+        f = open('tests/tests.games.final.json')
         data = json.loads(f.read())
         f.close()
         count = data['totalGames']
