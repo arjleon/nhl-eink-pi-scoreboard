@@ -124,6 +124,7 @@ class FinalGameCanvas(BaseLogosCanvas, BaseRecordsCanvas):
     def __init__(self, display: BaseDisplay, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
         super().__init__(display, font_provider, game, icon_provider)
+        super().__init__(display, font_provider, game)
 
         at = "@"
         at_font = super().get_font_by_size(20)
