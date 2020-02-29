@@ -32,4 +32,4 @@ class FontProvider:
         self.fonts_path = path.join(fonts_path, 'fonts')
 
     def get_font_path_filename(self):
-        return path.join(self.fonts_path, 'Roboto', 'Roboto-Medium.ttf')
+        return path.join(self.fonts_path, 'roboto', 'Roboto-Medium.ttf')
