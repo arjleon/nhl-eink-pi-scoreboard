@@ -110,6 +110,7 @@ class ScheduledGameCanvas(BaseRecordsCanvas, BaseLogosCanvas):
     def __init__(self, display: BaseDisplay, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider, days_delta: int):
         super().__init__(display, font_provider, game, icon_provider)
+        super().__init__(display, font_provider, game)
 
         day, time, tz = get_friendly_local_date(game, days_delta)
         text = f'@\n_____\n{day}\n{time}\n({tz})'
@@ -129,7 +130,7 @@ class FinalGameCanvas(BaseLogosCanvas, BaseRecordsCanvas):
         at_xy = super().get_center(self.display.size, self.canvas_b.textsize(at, font=at_font))
         self.canvas_b.text(at_xy, at, font=at_font)
 
-        score_font = super().get_font_by_size(70)
+        score_font = super().get_font_by_size(60)
         score_offset = int(0.04 * display.size[0])
         display_center = super().get_center(display.size, (0, 0))
 
