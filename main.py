@@ -6,10 +6,10 @@ import json
 import requests
 import os
 from time import sleep
-from game import Game, GameStatus
+from game import Game
 from display import Display
 from utils import TeamIconProvider, FontProvider
-from DisplayCanvas import UpcomingGameCanvas
+from DisplayCanvas import DisplayCanvas
 
 
 def write_file(filename, content):
@@ -99,14 +99,15 @@ resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res'
 font_provider = FontProvider(resources_path)
 icon_provider = TeamIconProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
-game, days_delta = get_next_game(team_id, datetime.today() + timedelta(days=6))  # - timedelta(days=1)
+game, days_delta = get_next_game(team_id, datetime.today())  # -/+ timedelta(days=1)
 
 display = Display()
 display.start()
 display.clear()
 
 try:
-    canvas = UpcomingGameCanvas(display, font_provider, game, icon_provider, days_delta)
-    canvas.draw()
+    DisplayCanvas\
+        .get_prepared_canvas(display, font_provider, game, icon_provider, days_delta)\
+        .draw()
 finally:
     display.stop()
