@@ -20,8 +20,8 @@ class DisplayCanvas(object):
     def get_font_by_size(self, size: int):
         key = str(size)
         if self.size_to_font.get(key) is None:
-            filename = os.path.join(self.font_provider.get_font_path(), 'Font.ttc')
-            self.size_to_font[key] = ImageFont.truetype(filename, size)
+            font = self.font_provider.get_font_path_filename()
+            self.size_to_font[key] = ImageFont.truetype(font, size)
         return self.size_to_font[key]
 
     @staticmethod
@@ -49,7 +49,6 @@ class DisplayCanvas(object):
 
     def draw(self):
         self.display.update(self.b, self.ry)
-
 
 class ScheduledGameCanvas(DisplayCanvas):
 

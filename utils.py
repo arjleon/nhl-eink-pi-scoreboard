@@ -31,5 +31,5 @@ class FontProvider:
     def __init__(self, fonts_path: str):
         self.fonts_path = fonts_path
 
-    def get_font_path(self):
-        return self.fonts_path
+    def get_font_path_filename(self):
+        return path.join(self.fonts_path, 'Roboto', 'Roboto-Medium.ttf')

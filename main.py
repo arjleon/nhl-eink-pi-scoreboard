@@ -85,7 +85,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
 
 
 id_to_abbr = get_abbreviations(get_teams())
-resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
+resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res', 'fonts')
 font_provider = FontProvider(resources_path)
 icon_provider = TeamIconProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
