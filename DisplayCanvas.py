@@ -107,7 +107,7 @@ class FinalGameCanvas(ScheduledGameCanvas):
 
     def __init__(self, display: Display, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
-        super().__init__(display, font_provider)
+        super().__init__(display, font_provider, game, icon_provider, 0)
         super().apply_team_logos(game, icon_provider)
 
         at = "@"
