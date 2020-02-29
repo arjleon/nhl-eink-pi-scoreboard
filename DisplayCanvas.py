@@ -119,13 +119,13 @@ class FinalGameCanvas(ScheduledGameCanvas):
         score_font = super().get_font_by_size(120)
         display_center = super().get_center(display.size, (0, 0))
 
-        away_score_size = canvas.textsize(game.away.score, score_font)
+        away_score_size = canvas.textsize(str(game.away.score), score_font)
         away_score_xy = (display_center[0] - away_score_size[0], display_center[1])
-        canvas.text(away_score_xy, game.away.score, font=score_font)
+        canvas.text(away_score_xy, str(game.away.score), font=score_font)
 
-        home_score_size = canvas.textsize(game.home.score, score_font)
+        home_score_size = canvas.textsize(str(game.home.score), score_font)
         home_score_xy = (display_center[0] + home_score_size[0], display_center[1])
-        canvas.text(home_score_xy, game.home.score, font=score_font)
+        canvas.text(home_score_xy, str(game.home.score), font=score_font)
 
         final = 'Final'
         final_font = super().get_font_by_size(22)
