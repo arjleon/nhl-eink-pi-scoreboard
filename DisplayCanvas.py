@@ -50,6 +50,7 @@ class DisplayCanvas(object):
     def draw(self):
         self.display.update(self.b, self.ry)
 
+
 class ScheduledGameCanvas(DisplayCanvas):
 
     def __init__(self, display: Display, font_provider: FontProvider,
@@ -58,11 +59,11 @@ class ScheduledGameCanvas(DisplayCanvas):
 
         # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
-        icon_margin = int(0.03 * min(self.display.size))
+        icon_edge_spacing = int(0.03 * min(self.display.size))
 
         home_icon_b_path, home_icon_ry_path = icon_provider.get_team_icon_path(game.home.id)
         home_icon_b = Image.open(home_icon_b_path)
-        home_icon_xy = super().get_center_right(self.display.size, home_icon_b.size, icon_margin)
+        home_icon_xy = super().get_center_right(self.display.size, home_icon_b.size, icon_edge_spacing)
         self.b.paste(home_icon_b, home_icon_xy)
         if os.path.exists(home_icon_ry_path):
             home_icon_ry = Image.open(home_icon_ry_path)
@@ -70,14 +71,14 @@ class ScheduledGameCanvas(DisplayCanvas):
 
         away_icon_b_path, away_icon_ry_path = icon_provider.get_team_icon_path(game.away.id)
         away_icon_b = Image.open(away_icon_b_path)
-        away_icon_xy = super().get_center_left(self.display.size, away_icon_b.size, icon_margin)
+        away_icon_xy = super().get_center_left(self.display.size, away_icon_b.size, icon_edge_spacing)
         self.b.paste(away_icon_b, away_icon_xy)
         if os.path.exists(away_icon_ry_path):
             away_icon_ry = Image.open(away_icon_ry_path)
             self.ry.paste(away_icon_ry, away_icon_xy)
 
         day, time, tz = get_friendly_local_date(game, days_delta)
-        text = f'@\n--\n{day}\n{time}\n({tz})'
+        text = f'@\n_____\n{day}\n{time}\n({tz})'
 
         text_font = super().get_font_by_size(18)
         canvas_b = ImageDraw.Draw(self.b)
