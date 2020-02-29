@@ -87,6 +87,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
 id_to_abbr = get_abbreviations(get_teams())
 resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
 font_provider = FontProvider(resources_path)
+print(f'Font:{font_provider.get_font_path_filename()}')
 icon_provider = TeamIconProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
 game, days_delta = get_next_game(team_id, datetime.today() + timedelta(days=1))  # -/+ timedelta(days=1)
