@@ -105,12 +105,12 @@ class BaseRecordsCanvas(DisplayCanvas):
         self.canvas_b.text(home_record_xy, home_record, font=record_font)
 
 
-class ScheduledGameCanvas(BaseRecordsCanvas, BaseLogosCanvas):
+class ScheduledGameCanvas(BaseLogosCanvas, BaseRecordsCanvas):
 
     def __init__(self, display: BaseDisplay, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider, days_delta: int):
-        BaseRecordsCanvas.__init__(self, display, font_provider, game)
         BaseLogosCanvas.__init__(self, display, font_provider, game, icon_provider)
+        BaseRecordsCanvas.__init__(self, display, font_provider, game)
 
         day, time, tz = get_friendly_local_date(game, days_delta)
         text = f'@\n_____\n{day}\n{time}\n({tz})'
@@ -119,12 +119,12 @@ class ScheduledGameCanvas(BaseRecordsCanvas, BaseLogosCanvas):
         self.canvas_b.multiline_text(text_xy, text, font=text_font, align='center')
 
 
-class FinalGameCanvas(BaseRecordsCanvas, BaseLogosCanvas):
+class FinalGameCanvas(BaseLogosCanvas, BaseRecordsCanvas):
 
     def __init__(self, display: BaseDisplay, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
-        BaseRecordsCanvas.__init__(self, display, font_provider, game)
         BaseLogosCanvas.__init__(self, display, font_provider, game, icon_provider)
+        BaseRecordsCanvas.__init__(self, display, font_provider, game)
 
         at = "@"
         at_font = super().get_font_by_size(20)
