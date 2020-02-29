@@ -77,12 +77,12 @@ class ScheduledGameCanvas(DisplayCanvas):
             self.ry.paste(away_icon_ry, away_icon_xy)
 
         day, time, tz = get_friendly_local_date(game, days_delta)
-        friendly_date = f'{day}\n{time}\n({tz})'
+        text = f'@\n--\n{day}\n{time}\n({tz})'
 
-        date_font = super().get_font_by_size(18)
+        text_font = super().get_font_by_size(18)
         canvas_b = ImageDraw.Draw(self.b)
-        date_xy = super().get_center(self.display.size, canvas_b.textsize(friendly_date, date_font))
-        canvas_b.multiline_text(date_xy, friendly_date, font=date_font, align='center')
+        text_xy = super().get_center(self.display.size, canvas_b.textsize(text, text_font))
+        canvas_b.multiline_text(text_xy, text, font=text_font, align='center')
 
         record_font = super().get_font_by_size(15)
 
