@@ -5,16 +5,62 @@ libraries = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'libs')
 if os.path.exists(libraries):
     sys.path.append(libraries)
 
-# noinspection PyUnresolvedReferences
-from waveshare_epd import epd2in9bc
+try:
+    # noinspection PyUnresolvedReferences
+    from waveshare_epd import epd2in9bc
+except OSError:
+    pass
+
 import logging
 from time import sleep
 
 
-class Display:
+def get_display():
+
+    try:
+        return Epd2in9bcDisplay()
+    except NameError:
+        return EmptyDisplay()
+
+
+class BaseDisplay:
+
+    def __init__(self, width: int = 0, height: int = 0):
+        self.size = (width, height)
+
+    def start(self):
+        raise NotImplementedError()
+
+    def stop(self):
+        raise NotImplementedError()
+
+    def clear(self):
+        raise NotImplementedError()
+
+    def update(self, b, ry):
+        raise NotImplementedError()
+
+
+class EmptyDisplay(BaseDisplay):
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def clear(self):
+        pass
+
+    def update(self, b, ry):
+        pass
+
+
+class Epd2in9bcDisplay(BaseDisplay):
+
     def __init__(self):
         self.epd = epd2in9bc.EPD()
-        self.size = (self.epd.height, self.epd.width)  # Display always used horizontal (H x W)
+        super().__init__(self.epd.height, self.epd.width)  # Display always used horizontal (H x W)
         self.log = logging
         self.log.basicConfig(level=logging.DEBUG)
         self.is_initialized = False

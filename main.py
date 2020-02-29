@@ -4,10 +4,8 @@ import constants
 from datetime import datetime, timedelta
 import json
 import requests
-import os
-from time import sleep
 from game import Game
-from display import Display
+from display import *
 from utils import TeamIconProvider, FontProvider
 from DisplayCanvas import DisplayCanvas
 
@@ -69,7 +67,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
         date_arg = f'date={date_time.strftime(constants.API_DATE_FORMAT)}'
         #response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=(60, 60))
         #data = json.loads(response.content)
-        f = open('tests/tests.games.final.json')
+        f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.games.final.json'))
         data = json.loads(f.read())
         f.close()
         count = data['totalGames']
@@ -91,7 +89,7 @@ icon_provider = TeamIconProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
 game, days_delta = get_next_game(team_id, datetime.today() + timedelta(days=1))  # -/+ timedelta(days=1)
 
-display = Display()
+display = get_display()
 display.start()
 display.clear()
 

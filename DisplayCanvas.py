@@ -1,4 +1,4 @@
-from display import Display
+from display import *
 from game import Game, GameStatus
 from PIL import Image, ImageDraw, ImageFont
 import os
@@ -7,19 +7,21 @@ from utils import get_friendly_local_date, TeamIconProvider, FontProvider
 
 class DisplayCanvas(object):
 
-    def __init__(self, display: Display, font_provider: FontProvider):
+    def __init__(self, display: BaseDisplay, font_provider: FontProvider):
         self.display = display
         self.font_provider = font_provider
         self.size_to_font = dict()
-        self.b = self.__new_image()
+        self.b = self.__new_image(self.display)
         self.canvas_b = self.__new_canvas(self.b)
-        self.ry = self.__new_image()
+        self.ry = self.__new_image(self.display)
         self.canvas_ry = self.__new_canvas(self.ry)
 
-    def __new_image(self):
-        return Image.new('1', (self.display.size[0], self.display.size[1]), 255)
+    @staticmethod
+    def __new_image(display: BaseDisplay):
+        return Image.new('1', (display.size[0], display.size[1]), 255)
 
-    def __new_canvas(self, im: Image):
+    @staticmethod
+    def __new_canvas(im: Image):
         return ImageDraw.Draw(im)
 
     def get_font_by_size(self, size: int):
@@ -30,7 +32,7 @@ class DisplayCanvas(object):
         return self.size_to_font[key]
 
     @staticmethod
-    def get_prepared_canvas(display: Display, font_provider: FontProvider,
+    def get_prepared_canvas(display: BaseDisplay, font_provider: FontProvider,
                             game: Game, icon_provider: TeamIconProvider, days_delta: int):
 
         if GameStatus.SCHEDULED == game.status:
@@ -58,11 +60,11 @@ class DisplayCanvas(object):
         self.display.update(self.b, self.ry)
 
 
-class __BaseLogosCanvas(DisplayCanvas):
+class BaseLogosCanvas(DisplayCanvas):
 
-    def __init__(self, display: Display, font_provider: FontProvider,
+    def __init__(self, display: BaseDisplay, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
-        super().__init__(display, font_provider)
+        DisplayCanvas.__init__(self, display, font_provider)
 
         # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
@@ -85,10 +87,10 @@ class __BaseLogosCanvas(DisplayCanvas):
             self.ry.paste(away_icon_ry, away_icon_xy)
 
 
-class __BaseRecordsCanvas(DisplayCanvas):
+class BaseRecordsCanvas(DisplayCanvas):
 
-    def __init__(self, display: Display, font_provider: FontProvider, game: Game):
-        super().__init__(display, font_provider)
+    def __init__(self, display: BaseDisplay, font_provider: FontProvider, game: Game):
+        DisplayCanvas.__init__(self, display, font_provider)
 
         record_font = super().get_font_by_size(15)
 
@@ -103,12 +105,11 @@ class __BaseRecordsCanvas(DisplayCanvas):
         self.canvas_b.text(home_record_xy, home_record, font=record_font)
 
 
-class ScheduledGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
+class ScheduledGameCanvas(BaseRecordsCanvas, BaseLogosCanvas):
 
-    def __init__(self, display: Display, font_provider: FontProvider,
+    def __init__(self, display: BaseDisplay, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider, days_delta: int):
         super().__init__(display, font_provider, game, icon_provider)
-        #super().__init__(display, font_provider, game)
 
         day, time, tz = get_friendly_local_date(game, days_delta)
         text = f'@\n_____\n{day}\n{time}\n({tz})'
@@ -117,12 +118,11 @@ class ScheduledGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
         self.canvas_b.multiline_text(text_xy, text, font=text_font, align='center')
 
 
-class FinalGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
+class FinalGameCanvas(BaseLogosCanvas, BaseRecordsCanvas):
 
-    def __init__(self, display: Display, font_provider: FontProvider,
+    def __init__(self, display: BaseDisplay, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
         super().__init__(display, font_provider, game, icon_provider)
-        #super().__init__(display, font_provider, game)
 
         at = "@"
         at_font = super().get_font_by_size(20)
@@ -152,7 +152,7 @@ class FinalGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
 
 class UnexpectedGameCanvas(DisplayCanvas):
 
-    def __init__(self, display: Display, font_provider: FontProvider, game: Game):
+    def __init__(self, display: BaseDisplay, font_provider: FontProvider, game: Game):
         super().__init__(display, font_provider)
 
         error_font_size = 16
