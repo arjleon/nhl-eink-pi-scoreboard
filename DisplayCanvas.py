@@ -53,34 +53,11 @@ class DisplayCanvas(object):
         self.display.update(self.b, self.ry)
 
 
-class ScheduledGameCanvas(DisplayCanvas):
+class __BaseLogosCanvas(DisplayCanvas):
 
     def __init__(self, display: Display, font_provider: FontProvider,
-                 game: Game, icon_provider: TeamIconProvider, days_delta: int):
+                 game: Game, icon_provider: TeamIconProvider):
         super().__init__(display, font_provider)
-
-        self.apply_team_logos(game, icon_provider)
-
-        day, time, tz = get_friendly_local_date(game, days_delta)
-        text = f'@\n_____\n{day}\n{time}\n({tz})'
-        text_font = super().get_font_by_size(18)
-        canvas_b = ImageDraw.Draw(self.b)
-        text_xy = super().get_center(self.display.size, canvas_b.textsize(text, text_font))
-        canvas_b.multiline_text(text_xy, text, font=text_font, align='center')
-
-        record_font = super().get_font_by_size(15)
-
-        away_record = f'({game.away.wins}-{game.away.losses}-{game.away.ot})'
-        away_record_size = canvas_b.textsize(away_record, record_font)
-        away_record_xy = (0, display.size[1] - away_record_size[1])
-        canvas_b.text(away_record_xy, away_record, font=record_font)
-
-        home_record = f'({game.home.wins}-{game.home.losses}-{game.home.ot})'
-        home_record_size = canvas_b.textsize(home_record, record_font)
-        home_record_xy = (display.size[0] - home_record_size[0], display.size[1] - home_record_size[1])
-        canvas_b.text(home_record_xy, home_record, font=record_font)
-
-    def apply_team_logos(self, game: Game, icon_provider: TeamIconProvider):
 
         # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
@@ -103,12 +80,37 @@ class ScheduledGameCanvas(DisplayCanvas):
             self.ry.paste(away_icon_ry, away_icon_xy)
 
 
-class FinalGameCanvas(ScheduledGameCanvas):
+class ScheduledGameCanvas(__BaseLogosCanvas):
+
+    def __init__(self, display: Display, font_provider: FontProvider,
+                 game: Game, icon_provider: TeamIconProvider, days_delta: int):
+        super().__init__(display, font_provider, game, icon_provider)
+
+        day, time, tz = get_friendly_local_date(game, days_delta)
+        text = f'@\n_____\n{day}\n{time}\n({tz})'
+        text_font = super().get_font_by_size(18)
+        canvas_b = ImageDraw.Draw(self.b)
+        text_xy = super().get_center(self.display.size, canvas_b.textsize(text, text_font))
+        canvas_b.multiline_text(text_xy, text, font=text_font, align='center')
+
+        record_font = super().get_font_by_size(15)
+
+        away_record = f'({game.away.wins}-{game.away.losses}-{game.away.ot})'
+        away_record_size = canvas_b.textsize(away_record, record_font)
+        away_record_xy = (0, display.size[1] - away_record_size[1])
+        canvas_b.text(away_record_xy, away_record, font=record_font)
+
+        home_record = f'({game.home.wins}-{game.home.losses}-{game.home.ot})'
+        home_record_size = canvas_b.textsize(home_record, record_font)
+        home_record_xy = (display.size[0] - home_record_size[0], display.size[1] - home_record_size[1])
+        canvas_b.text(home_record_xy, home_record, font=record_font)
+
+
+class FinalGameCanvas(__BaseLogosCanvas):
 
     def __init__(self, display: Display, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
-        super().__init__(display, font_provider, game, icon_provider, 0)
-        super().apply_team_logos(game, icon_provider)
+        super().__init__(display, font_provider, game, icon_provider)
 
         at = "@"
         at_font = super().get_font_by_size(20)
@@ -116,7 +118,7 @@ class FinalGameCanvas(ScheduledGameCanvas):
         at_xy = super().get_center(self.display.size, canvas.textsize(at, font=at_font))
         canvas.text(at_xy, at, font=at_font)
 
-        score_font = super().get_font_by_size(120)
+        score_font = super().get_font_by_size(70)
         display_center = super().get_center(display.size, (0, 0))
 
         away_score_size = canvas.textsize(str(game.away.score), score_font)
@@ -130,7 +132,7 @@ class FinalGameCanvas(ScheduledGameCanvas):
         final = 'Final'
         final_font = super().get_font_by_size(22)
         final_size = canvas.textsize(final, font=final_font)
-        final_xy = (display_center[0] - final_size[0], display.size[1] - final_size[1])
+        final_xy = (display_center[0] - (final_size[0]/2), display.size[1] - final_size[1])
         canvas.text(final_xy, final, font=final_font)
 
 
