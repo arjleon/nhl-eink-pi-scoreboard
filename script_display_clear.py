@@ -1,6 +1,6 @@
-from display import Display
+from display import *
 
-display = Display()
+display = get_display()
 display.start()
 display.clear()
 display.stop()
