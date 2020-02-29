@@ -87,8 +87,7 @@ class __BaseLogosCanvas(DisplayCanvas):
 
 class __BaseRecordsCanvas(DisplayCanvas):
 
-    def __init__(self, display: Display, font_provider: FontProvider,
-                 game: Game):
+    def __init__(self, display: Display, font_provider: FontProvider, game: Game):
         super().__init__(display, font_provider)
 
         record_font = super().get_font_by_size(15)
@@ -109,7 +108,7 @@ class ScheduledGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
     def __init__(self, display: Display, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider, days_delta: int):
         super().__init__(display, font_provider, game, icon_provider)
-        super().__init__(display, font_provider, game)
+        #super().__init__(display, font_provider, game)
 
         day, time, tz = get_friendly_local_date(game, days_delta)
         text = f'@\n_____\n{day}\n{time}\n({tz})'
@@ -123,7 +122,7 @@ class FinalGameCanvas(__BaseLogosCanvas, __BaseRecordsCanvas):
     def __init__(self, display: Display, font_provider: FontProvider,
                  game: Game, icon_provider: TeamIconProvider):
         super().__init__(display, font_provider, game, icon_provider)
-        super().__init__(display, font_provider, game)
+        #super().__init__(display, font_provider, game)
 
         at = "@"
         at_font = super().get_font_by_size(20)
