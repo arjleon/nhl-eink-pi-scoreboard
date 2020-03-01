@@ -3,6 +3,7 @@ from game import Game, GameStatus
 from PIL import Image, ImageDraw, ImageFont
 import os
 from utils import get_friendly_local_date, LogoProvider, FontProvider
+import constants
 
 
 class Canvas(object):
@@ -65,7 +66,7 @@ class ScheduledGameCanvas(Canvas):
     def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider, days_delta: int):
         super().__init__(d, fp)
 
-        draw_logos(self, g, lp)
+        draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING)
 
         day, time, tz = get_friendly_local_date(g, days_delta)
         text = f'@\n_____\n{day}\n{time}\n({tz})'
@@ -79,7 +80,7 @@ class FinalGameCanvas(Canvas):
     def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider):
         super().__init__(d, fp)
 
-        draw_logos(self, g, lp)
+        draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING, (0, -4))
         draw_records(self, g)
 
         at = "@"
@@ -120,18 +121,18 @@ class UnexpectedGameCanvas(Canvas):
         self.canvas_b.text(error_xy, error_str, font=error_font)
 
 
-def draw_logos(c: Canvas, g: Game, lp: LogoProvider):
+def draw_logos(c: Canvas, g: Game, lp: LogoProvider, edge_spacing=0, offset=(0, 0)):
 
     # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
-    edge_spacing = int(0.03 * min(c.display.size))
-    factor = 0.6
+    factor = 0.65
     new_size = (int(factor * c.display.size[0]), int(factor * c.display.size[1]))
 
     home_b_path, home_ry_path = lp.get_team_logo_path(g.home.id)
     home_b = Image.open(home_b_path)
     home_b.thumbnail(new_size)
     home_xy = c.get_center_right(c.display.size, home_b.size, edge_spacing)
+    home_xy += offset
     c.b.paste(home_b, home_xy)
     if os.path.exists(home_ry_path):
         home_ry = Image.open(home_ry_path)
@@ -142,6 +143,7 @@ def draw_logos(c: Canvas, g: Game, lp: LogoProvider):
     away_b = Image.open(away_b_path)
     away_b.thumbnail(new_size)
     away_xy = c.get_center_left(c.display.size, away_b.size, edge_spacing)
+    away_xy += offset
     c.b.paste(away_b, away_xy)
     if os.path.exists(away_ry_path):
         away_ry = Image.open(away_ry_path)
