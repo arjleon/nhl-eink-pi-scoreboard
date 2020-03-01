@@ -43,6 +43,10 @@ class BaseDisplay:
 
 class EmptyDisplay(BaseDisplay):
 
+    def __init__(self):
+        super().__init__()
+        print(f'{self.__class__.__name__} init')
+
     def start(self):
         pass
 

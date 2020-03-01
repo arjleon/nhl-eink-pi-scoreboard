@@ -15,16 +15,16 @@ def get_friendly_local_date(g, days_ahead, to_tz=None):
     return day, time_local_str, tz_local_str
 
 
-class TeamIconProvider:
-    def __init__(self, id_to_abbr: dict, icons_path: str):
+class LogoProvider:
+    def __init__(self, id_to_abbr: dict, logos_path: str):
         self.id_to_abbr = id_to_abbr
-        self.icons_path = path.join(icons_path, 'logos')
+        self.logos_path = path.join(logos_path, 'logos')
 
-    def get_team_icon_path(self, tid):
+    def get_team_logo_path(self, tid):
         abbr = self.id_to_abbr[tid].lower()
         ext = '.gif'
-        b_path = path.join(self.icons_path, f'{abbr}-b{ext}')
-        ry_path = path.join(self.icons_path, f'{abbr}-ry{ext}')
+        b_path = path.join(self.logos_path, f'{abbr}-b{ext}')
+        ry_path = path.join(self.logos_path, f'{abbr}-ry{ext}')
         return b_path, ry_path
 
 

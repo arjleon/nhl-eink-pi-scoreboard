@@ -6,8 +6,8 @@ import json
 import requests
 from game import Game
 from display import *
-from utils import TeamIconProvider, FontProvider
-from DisplayCanvas import DisplayCanvas
+from utils import LogoProvider, FontProvider
+from canvas import Canvas
 
 
 def write_file(filename, content):
@@ -85,7 +85,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
 id_to_abbr = get_abbreviations(get_teams())
 resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
 font_provider = FontProvider(resources_path)
-icon_provider = TeamIconProvider(id_to_abbr, resources_path)
+icon_provider = LogoProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
 game, days_delta = get_next_game(team_id, datetime.today() + timedelta(days=1))  # -/+ timedelta(days=1)
 
@@ -94,7 +94,7 @@ display.start()
 display.clear()
 
 try:
-    DisplayCanvas\
+    Canvas\
         .get_prepared_canvas(display, font_provider, game, icon_provider, days_delta)\
         .draw()
 finally:
