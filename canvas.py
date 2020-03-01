@@ -126,7 +126,6 @@ def draw_logos(c: Canvas, g: Game, lp: LogoProvider, edge_spacing=0, offset=(0, 
     # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
     factor = 0.65
-    c.display.size = (296, 128)
     new_size = (int(factor * c.display.size[0]), int(factor * c.display.size[1]))
     home_b_path, home_ry_path = lp.get_team_logo_path(g.home.id)
     home_b = Image.open(home_b_path)
