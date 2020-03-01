@@ -65,11 +65,11 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
     while loop < constants.NEXT_GAME_CHECK_LIMIT:
         team_arg = f'teamId={tid}'
         date_arg = f'date={date_time.strftime(constants.API_DATE_FORMAT)}'
-        #response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=(60, 60))
-        #data = json.loads(response.content)
-        f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res/debug/debug-mar09.json'))
-        data = json.loads(f.read())
-        f.close()
+        response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=(60, 60))
+        data = json.loads(response.content)
+        #f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res/debug/debug-mar09.json'))
+        #data = json.loads(f.read())
+        #f.close()
         count = data['totalGames']
         if count > 0:
             single_game = Game(data['dates'][0]['games'][0])
