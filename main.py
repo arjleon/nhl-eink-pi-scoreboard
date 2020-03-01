@@ -73,7 +73,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
         count = data['totalGames']
         if count > 0:
             single_game = Game(data['dates'][0]['games'][0])
-            return single_game, loop
+            return single_game
         else:
             pause = 1
             print(f'({loop}) No games, checking next day in {pause}s...')
@@ -87,7 +87,7 @@ resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res'
 font_provider = FontProvider(resources_path)
 icon_provider = LogoProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
-game, days_delta = get_next_game(team_id, datetime.today(), loop=2)  # -/+ timedelta(days=1)
+game = get_next_game(team_id, datetime.today())  # -/+ timedelta(days=1)
 
 display = get_display()
 display.start()
@@ -95,7 +95,7 @@ display.clear()
 
 try:
     Canvas\
-        .get_prepared_canvas(display, font_provider, game, icon_provider, days_delta)\
+        .get_prepared_canvas(display, font_provider, game, icon_provider)\
         .draw()
 finally:
     display.stop()

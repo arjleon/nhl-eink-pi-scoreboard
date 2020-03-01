@@ -49,10 +49,10 @@ class Canvas(object):
 
     @staticmethod
     def get_prepared_canvas(display: BaseDisplay, font_provider: FontProvider,
-                            game: Game, icon_provider: LogoProvider, days_delta: int):
+                            game: Game, icon_provider: LogoProvider):
 
         if GameStatus.SCHEDULED == game.status:
-            return ScheduledGameCanvas(display, font_provider, game, icon_provider, days_delta)
+            return ScheduledGameCanvas(display, font_provider, game, icon_provider)
         elif GameStatus.FINAL == game.status:
             return FinalGameCanvas(display, font_provider, game, icon_provider)
         else:
@@ -64,7 +64,7 @@ class Canvas(object):
 
 class ScheduledGameCanvas(Canvas):
 
-    def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider, days_delta: int):
+    def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider):
         super().__init__(d, fp)
 
         draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING)
