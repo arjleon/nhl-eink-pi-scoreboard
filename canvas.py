@@ -126,13 +126,13 @@ def draw_logos(c: Canvas, g: Game, lp: LogoProvider, edge_spacing=0, offset=(0, 
     # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
     factor = 0.65
+    c.display.size = (296, 128)
     new_size = (int(factor * c.display.size[0]), int(factor * c.display.size[1]))
-
     home_b_path, home_ry_path = lp.get_team_logo_path(g.home.id)
     home_b = Image.open(home_b_path)
-    home_b.thumbnail(new_size)
+    home_b.resize(new_size)
     home_xy = c.get_center_right(c.display.size, home_b.size, edge_spacing)
-    home_xy += offset
+    home_xy = (home_xy[0] + offset[0], home_xy[1] + offset[1])
     c.b.paste(home_b, home_xy)
     if os.path.exists(home_ry_path):
         home_ry = Image.open(home_ry_path)
@@ -143,7 +143,7 @@ def draw_logos(c: Canvas, g: Game, lp: LogoProvider, edge_spacing=0, offset=(0, 
     away_b = Image.open(away_b_path)
     away_b.thumbnail(new_size)
     away_xy = c.get_center_left(c.display.size, away_b.size, edge_spacing)
-    away_xy += offset
+    away_xy = (away_xy[0] + offset[0], away_xy[1] + offset[1])
     c.b.paste(away_b, away_xy)
     if os.path.exists(away_ry_path):
         away_ry = Image.open(away_ry_path)
