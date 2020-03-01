@@ -124,23 +124,29 @@ def draw_logos(c: Canvas, g: Game, lp: LogoProvider):
 
     # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
-    icon_edge_spacing = int(0.03 * min(c.display.size))
+    edge_spacing = int(0.03 * min(c.display.size))
+    factor = 0.6
+    new_size = (int(factor * c.display.size[0]), int(factor * c.display.size[1]))
 
-    home_icon_b_path, home_icon_ry_path = lp.get_team_logo_path(g.home.id)
-    home_icon_b = Image.open(home_icon_b_path)
-    home_icon_xy = c.get_center_right(c.display.size, home_icon_b.size, icon_edge_spacing)
-    c.b.paste(home_icon_b, home_icon_xy)
-    if os.path.exists(home_icon_ry_path):
-        home_icon_ry = Image.open(home_icon_ry_path)
-        c.ry.paste(home_icon_ry, home_icon_xy)
+    home_b_path, home_ry_path = lp.get_team_logo_path(g.home.id)
+    home_b = Image.open(home_b_path)
+    home_b.thumbnail(new_size)
+    home_xy = c.get_center_right(c.display.size, home_b.size, edge_spacing)
+    c.b.paste(home_b, home_xy)
+    if os.path.exists(home_ry_path):
+        home_ry = Image.open(home_ry_path)
+        home_ry.thumbnail(new_size)
+        c.ry.paste(home_ry, home_xy)
 
-    away_icon_b_path, away_icon_ry_path = lp.get_team_logo_path(g.away.id)
-    away_icon_b = Image.open(away_icon_b_path)
-    away_icon_xy = c.get_center_left(c.display.size, away_icon_b.size, icon_edge_spacing)
-    c.b.paste(away_icon_b, away_icon_xy)
-    if os.path.exists(away_icon_ry_path):
-        away_icon_ry = Image.open(away_icon_ry_path)
-        c.ry.paste(away_icon_ry, away_icon_xy)
+    away_b_path, away_ry_path = lp.get_team_logo_path(g.away.id)
+    away_b = Image.open(away_b_path)
+    away_b.thumbnail(new_size)
+    away_xy = c.get_center_left(c.display.size, away_b.size, edge_spacing)
+    c.b.paste(away_b, away_xy)
+    if os.path.exists(away_ry_path):
+        away_ry = Image.open(away_ry_path)
+        away_ry.thumbnail(new_size)
+        c.ry.paste(away_ry, away_xy)
 
 
 def draw_records(c: Canvas, g: Game):
