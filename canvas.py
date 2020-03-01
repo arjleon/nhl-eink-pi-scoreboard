@@ -130,7 +130,7 @@ def draw_logos(c: Canvas, g: Game, lp: LogoProvider, edge_spacing=0, offset=(0, 
     new_size = (int(factor * c.display.size[0]), int(factor * c.display.size[1]))
     home_b_path, home_ry_path = lp.get_team_logo_path(g.home.id)
     home_b = Image.open(home_b_path)
-    home_b.resize(new_size)
+    home_b.thumbnail(new_size)
     home_xy = c.get_center_right(c.display.size, home_b.size, edge_spacing)
     home_xy = (home_xy[0] + offset[0], home_xy[1] + offset[1])
     c.b.paste(home_b, home_xy)
