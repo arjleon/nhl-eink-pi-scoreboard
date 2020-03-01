@@ -2,8 +2,9 @@ from display import *
 from game import Game, GameStatus
 from PIL import Image, ImageDraw, ImageFont
 import os
-from utils import get_friendly_local_date, LogoProvider, FontProvider
+from utils import get_friendly_game_time, LogoProvider, FontProvider
 import constants
+import pytz
 
 
 class Canvas(object):
@@ -67,8 +68,9 @@ class ScheduledGameCanvas(Canvas):
         super().__init__(d, fp)
 
         draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING)
+        draw_records(self, g)
 
-        day, time, tz = get_friendly_local_date(g, days_delta)
+        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone('US/Pacific'))
         text = f'@\n_____\n{day}\n{time}\n({tz})'
         text_font = super().get_font_by_size(18)
         text_xy = super().get_center(self.display.size, self.canvas_b.textsize(text, text_font))

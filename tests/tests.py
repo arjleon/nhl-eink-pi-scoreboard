@@ -3,6 +3,8 @@ import main
 import json
 from game import Game, GameStatus
 import utils
+import pytz
+from datetime import timedelta
 
 
 class MyTestCase(unittest.TestCase):
@@ -61,22 +63,32 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(g.status, GameStatus.FINAL)
         self.assertFalse(g.is_time_tbd)
 
-    def test_friendly_day_today(self):
+    def test_friendly_today_utc(self):
         g = get_game_from_file('tests.games.scheduled.json')
-        day, time, tz = utils.get_friendly_local_date(g, 0)
+        now_utc = g.datetime_utc - timedelta(hours=23)  # Diff of less than a day
+        day, time, tz = utils.get_friendly_game_time(g, now_utc)
+
         self.assertEqual('Today', day)
+        self.assertEqual('12:00AM', time)   # As defined in the input test file
+        self.assertEqual('UTC', tz)         # As no tz was provided
 
-    def test_friendly_day_tomorrow(self):
+    def test_friendly_tomorrow_us_pacific(self):
         g = get_game_from_file('tests.games.scheduled.json')
-        day, time, tz = utils.get_friendly_local_date(g, 1)
+        now_utc = g.datetime_utc - timedelta(days=1, hours=20)  # Diff over 1 day, less than 2
+        day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Pacific'))
+
         self.assertEqual('Tomorrow', day)
+        self.assertEqual('4:00PM', time)    # As defined in the input test file
+        self.assertEqual('PST', tz)         # As no tz was provided
 
-    def test_friendly_day_mmdd(self):
+    def test_friendly_mmdd_us_eastern(self):
         g = get_game_from_file('tests.games.scheduled.json')
-        day, time, tz = utils.get_friendly_local_date(g, 2)
-        self.assertEqual('Sat, Feb/01', day)
+        now_utc = g.datetime_utc - timedelta(days=5)  # Diff over 2 day
+        day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Eastern'))
 
-    # def test_friendly_time(self): # Test time conversion passing an overriding timezone
+        self.assertEqual('Sat, Feb/01', day)
+        self.assertEqual('7:00PM', time)    # As defined in the input test file
+        self.assertEqual('EST', tz)         # As no tz was provided
 
 
 def get_game_from_file(filename):

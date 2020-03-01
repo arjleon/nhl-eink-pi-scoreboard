@@ -1,18 +1,29 @@
 import re
 from os import path
+from datetime import datetime, timezone, tzinfo
+from game import Game
 
 
-def get_friendly_local_date(g, days_ahead, to_tz=None):
-    datetime_local = g.datetime_utc.astimezone(tz=to_tz)
-    # Format time and then remove any leading 0 in the hour segment via RegEx if present
-    time_local_str = datetime_local.strftime('%I:%M%p')
-    tz_local_str = datetime_local.strftime('%Z')
-    time_local_str = re.sub('^0', '', time_local_str)
-    # Next few lines will get a readable string for when the game is, otherwise mm/dd
+def get_friendly_game_time(g: Game, now_utc: datetime = datetime.now(timezone.utc),
+                           to_tz: tzinfo = timezone.utc):
+
+    # Convert from UTC to provided tz
+    game_local = g.datetime_utc.astimezone(to_tz)
+
+    # Create friendly versions of time and tz
+    friendly_time = game_local.strftime('%I:%M%p')
+    friendly_time = re.sub('^0', '', friendly_time)  # Remove leading zero
+    friendly_tz = game_local.strftime('%Z')
+
+    # Measure difference in days based on provided 'now'
+    days_delta = (g.datetime_utc - now_utc).days
+
+    # Create friendly version of the day
     days = {0: 'Today', 1: 'Tomorrow'}
-    days_default = datetime_local.strftime('%a, %b/%d')
-    day = days.get(days_ahead, days_default)
-    return day, time_local_str, tz_local_str
+    days_default = game_local.strftime('%a, %b/%d')
+    friendly_day = days.get(days_delta, days_default)
+
+    return friendly_day, friendly_time, friendly_tz
 
 
 class LogoProvider:

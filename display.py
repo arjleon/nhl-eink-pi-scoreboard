@@ -1,5 +1,7 @@
 import os
 import sys
+import logging
+from time import sleep
 
 libraries = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'libs')
 if os.path.exists(libraries):
@@ -11,16 +13,13 @@ try:
 except OSError:
     pass
 
-import logging
-from time import sleep
-
 
 def get_display():
 
     try:
         return Epd2in9bcDisplay()
     except NameError:
-        return EmptyDisplay()
+        return FakeEpd2in9bcDisplay()
 
 
 class BaseDisplay:
@@ -41,10 +40,10 @@ class BaseDisplay:
         raise NotImplementedError()
 
 
-class EmptyDisplay(BaseDisplay):
+class FakeEpd2in9bcDisplay(BaseDisplay):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(296, 128)
         print(f'{self.__class__.__name__} init')
 
     def start(self):
@@ -57,7 +56,9 @@ class EmptyDisplay(BaseDisplay):
         pass
 
     def update(self, b, ry):
-        pass
+        filename = 'display-b.gif'
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res', 'debug', filename)
+        b.save(path)
 
 
 class Epd2in9bcDisplay(BaseDisplay):

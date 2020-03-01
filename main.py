@@ -67,7 +67,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
         date_arg = f'date={date_time.strftime(constants.API_DATE_FORMAT)}'
         #response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=(60, 60))
         #data = json.loads(response.content)
-        f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.games.final.json'))
+        f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res/debug/debug-mar09.json'))
         data = json.loads(f.read())
         f.close()
         count = data['totalGames']
@@ -78,7 +78,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
             pause = 1
             print(f'({loop}) No games, checking next day in {pause}s...')
             sleep(pause)
-            return get_next_game(tid, date_time + timedelta(days=1), loop + 1)
+            return get_next_game(tid, date_time + timedelta(days=1))
     raise Exception(f'({loop}) Error, could not find the next match')
 
 
@@ -87,7 +87,7 @@ resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res'
 font_provider = FontProvider(resources_path)
 icon_provider = LogoProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
-game, days_delta = get_next_game(team_id, datetime.today() + timedelta(days=1))  # -/+ timedelta(days=1)
+game, days_delta = get_next_game(team_id, datetime.today(), loop=2)  # -/+ timedelta(days=1)
 
 display = get_display()
 display.start()
