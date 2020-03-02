@@ -1,7 +1,7 @@
 import unittest
 import main
 import json
-from game import Game, GameStatus
+from game import Game, GameStatus, DetailedGameState, DetailedGameStateTeam
 import utils
 import pytz
 from datetime import timedelta
@@ -90,12 +90,64 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual('7:00PM', time)    # As defined in the input test file
         self.assertEqual('EST', tz)         # As no tz was provided
 
+    def test_detailedgame_period(self):
+        d = get_detailed_game_from_file('tests.game.period1.pp.json')
+
+        self.assertEqual('1st', d.period)
+        self.assertEqual('04:11', d.period_remaining)
+
+    def test_detailedgame_pp(self):
+        d = get_detailed_game_from_file('tests.game.period1.pp.json')
+
+        self.assertTrue(d.in_pp)
+        self.assertEqual(108, d.pp_remaining_seconds)
+        self.assertTrue(d.home.in_pp)
+        self.assertFalse(d.away.in_pp)
+
+    def test_detailedgame_4on4(self):
+        d = get_detailed_game_from_file('tests.game.4on4.json')
+
+        self.assertTrue(d.in_pp)
+        self.assertEqual(4, d.home.num_skaters)
+        self.assertEqual(4, d.away.num_skaters)
+        self.assertFalse(d.home.in_pp)
+        self.assertFalse(d.away.in_pp)
+        self.assertFalse(d.home.goalie_pulled)
+        self.assertFalse(d.away.goalie_pulled)
+
+    def tests_detailedgame_intermission(self):
+        d1 = get_detailed_game_from_file('tests.game.4on4.json')
+
+        self.assertFalse(d1.in_intermission)
+        self.assertEqual(0, d1.intermission_remaining_seconds)
+
+        d2 = get_detailed_game_from_file('tests.game.intermission.json')
+
+        self.assertTrue(d2.in_intermission)
+        self.assertIsNotNone(d2.intermission_remaining_seconds)
+        self.assertEqual(1000, d2.intermission_remaining_seconds)
+
+    def tests_detailedgame_emptynet(self):
+        d = get_detailed_game_from_file('tests.game.emptynet.json')
+
+        self.assertTrue(d.home.goalie_pulled)
+        self.assertFalse(d.away.goalie_pulled)
+        self.assertEqual(6, d.home.num_skaters)
+        self.assertEqual(5, d.away.num_skaters)
+
 
 def get_game_from_file(filename):
     f = open(filename, 'r')
     j = json.loads(f.read())
     f.close()
     return Game(j['dates'][0]['games'][0])
+
+
+def get_detailed_game_from_file(filename):
+    f = open(filename, 'r')
+    j = json.loads(f.read())
+    f.close()
+    return DetailedGameState(j)
 
 
 if __name__ == '__main__':

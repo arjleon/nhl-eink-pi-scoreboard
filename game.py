@@ -35,3 +35,27 @@ class Team:
         self.wins = record['wins']
         self.losses = record['losses']
         self.ot = record['ot']
+
+
+class DetailedGameState:
+    def __init__(self, j):
+        linescore = j['liveData']['linescore']
+        self.period = linescore['currentPeriodOrdinal']
+        self.period_remaining = linescore['currentPeriodTimeRemaining']
+        self.strength = linescore['powerPlayStrength']
+        pp_info = linescore['powerPlayInfo']
+        self.in_pp = bool(pp_info['inSituation'])
+        self.pp_remaining_seconds = pp_info['situationTimeRemaining']
+        teams_info = linescore['teams']
+        self.home = DetailedGameStateTeam(teams_info['home'])
+        self.away = DetailedGameStateTeam(teams_info['away'])
+        intermission_info = linescore['intermissionInfo']
+        self.in_intermission = intermission_info['inIntermission']
+        self.intermission_remaining_seconds = intermission_info['intermissionTimeRemaining']
+
+
+class DetailedGameStateTeam:
+    def __init__(self, j):
+        self.goalie_pulled = bool(j['goaliePulled'])
+        self.num_skaters = j['numSkaters']
+        self.in_pp = bool(j['powerPlay'])
