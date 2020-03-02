@@ -1,6 +1,6 @@
 import re
 from os import path
-from datetime import datetime, timezone, tzinfo
+from datetime import datetime, timezone, tzinfo, timedelta
 from game import Game
 
 
@@ -24,6 +24,12 @@ def get_friendly_game_time(g: Game, now_utc: datetime = datetime.now(timezone.ut
     friendly_day = days.get(days_delta, days_default)
 
     return friendly_day, friendly_time, friendly_tz
+
+
+def pp_seconds_to_friendly(seconds: int):
+    d = timedelta(seconds=seconds)
+    formatted = str(d)
+    return formatted[formatted.index(':') + 2:]
 
 
 class LogoProvider:

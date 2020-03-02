@@ -1,7 +1,7 @@
 import unittest
 import main
 import json
-from game import Game, GameStatus, DetailedGameState, DetailedGameStateTeam
+from game import Game, GameStatus, GameDetails, GameDetailsTeam
 import utils
 import pytz
 from datetime import timedelta
@@ -147,7 +147,7 @@ def get_detailed_game_from_file(filename):
     f = open(filename, 'r')
     j = json.loads(f.read())
     f.close()
-    return DetailedGameState(j)
+    return GameDetails(j)
 
 
 if __name__ == '__main__':

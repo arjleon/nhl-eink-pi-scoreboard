@@ -1,8 +1,8 @@
 from display import *
-from game import Game, GameStatus
+from game import Game, GameStatus, GameDetails, GameDetailsTeam
 from PIL import Image, ImageDraw, ImageFont
 import os
-from utils import get_friendly_game_time, LogoProvider, FontProvider
+from utils import *
 import constants
 import pytz
 
@@ -49,12 +49,14 @@ class Canvas(object):
 
     @staticmethod
     def get_prepared_canvas(display: BaseDisplay, font_provider: FontProvider,
-                            game: Game, icon_provider: LogoProvider):
+                            game: Game, logo_provider: LogoProvider):
 
         if GameStatus.SCHEDULED == game.status:
-            return ScheduledGameCanvas(display, font_provider, game, icon_provider)
+            return ScheduledGameCanvas(display, font_provider, game, logo_provider)
+        elif (GameStatus.LIVE == game.status or GameStatus.LIVE_CRITICAL == game.status) and game.has_details():
+            return LiveGame(display, font_provider, game, logo_provider)
         elif GameStatus.FINAL == game.status:
-            return FinalGameCanvas(display, font_provider, game, icon_provider)
+            return FinalGameCanvas(display, font_provider, game, logo_provider)
         else:
             return UnexpectedGameCanvas(display, font_provider, game)
 
@@ -67,7 +69,7 @@ class ScheduledGameCanvas(Canvas):
     def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider):
         super().__init__(d, fp)
 
-        draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING)
+        draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING, scale=0.65)
         draw_records(self, g)
 
         day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone('US/Pacific'))
@@ -77,12 +79,69 @@ class ScheduledGameCanvas(Canvas):
         self.canvas_b.multiline_text(text_xy, text, font=text_font, align='center')
 
 
+class LiveGame(Canvas):
+
+    def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider):
+        super().__init__(d, fp)
+
+        logos_offset = (0, -int((0.2 * d.size[1])))
+        draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING, logos_offset, scale=0.5)
+
+        score_font = super().get_font_by_size(60)
+        score_offset = (int(0.1 * d.size[0]), int(0.1 * d.size[0]))
+        display_center = super().get_center(d.size, (0, 0))
+
+        away_score_size = self.canvas_b.textsize(str(g.away.score), score_font)
+        away_score_xy = (display_center[0] - away_score_size[0] - score_offset[0],
+                         display_center[1] - (away_score_size[1] / 2) - score_offset[1])
+        self.canvas_b.text(away_score_xy, str(g.away.score), font=score_font)
+
+        home_score_size = self.canvas_b.textsize(str(g.home.score), score_font)
+        home_score_xy = (display_center[0] + score_offset[0],
+                         display_center[1] - (home_score_size[1] / 2) - score_offset[1])
+        self.canvas_b.text(home_score_xy, str(g.home.score), font=score_font)
+
+        period_font = super().get_font_by_size(20)
+        period = f'{g.details.period}\n{g.details.period_remaining}'
+        period_size = self.canvas_b.textsize(period, period_font)
+        period_xy = (int(display_center[0] - period_size[0]/2),
+                     int(display_center[1] - period_size[1]/2 - score_offset[1]))
+        self.canvas_b.multiline_text(period_xy, period, font=period_font, align='center')
+
+        if g.details.in_pp:
+            pp = 'PP'
+            pp_offset = score_offset
+
+            if g.details.away.in_pp:
+                pp_offset = (pp_offset[0] * -1, pp_offset[1])
+
+            pp_font = self.get_font_by_size(20)
+            pp_size = self.canvas_b.textsize(pp, pp_font)
+            pp_size_max = int(max(pp_size[0], pp_size[1]))
+            pp_outline_size = (pp_size_max, pp_size_max)
+            pp_im = Image.new('1', pp_outline_size, 255)
+            pp_can = ImageDraw.Draw(pp_im)
+            pp_can.rectangle(((0, 0), pp_outline_size), fill=0)
+            pp_can.text((0, 0), pp, font=pp_font, fill=255)
+            pp_xy = (int(display_center[0] - pp_im.size[0]/2 + pp_offset[0] * 1.5),
+                     int(display_center[1] - pp_im.size[1]/2 + pp_offset[1]))
+
+            pp_time_font = self.get_font_by_size(15)
+            pp_time = pp_seconds_to_friendly(g.details.pp_remaining_seconds)
+            pp_time_size = self.canvas_b.textsize(pp_time, font=pp_time_font)
+            pp_time_xy = (int(display_center[0] - pp_time_size[0]/2),
+                          int(display_center[1] - pp_time_size[1]/2 + pp_offset[1]))
+            self.canvas_b.text(pp_time_xy, pp_time, font=pp_time_font)
+
+            self.b.paste(pp_im, pp_xy)
+
+
 class FinalGameCanvas(Canvas):
 
     def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider):
         super().__init__(d, fp)
 
-        draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING, (0, -4))
+        draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING, (0, -4), scale=0.65)
         draw_records(self, g)
 
         at = "@"
@@ -123,12 +182,12 @@ class UnexpectedGameCanvas(Canvas):
         self.canvas_b.text(error_xy, error_str, font=error_font)
 
 
-def draw_logos(c: Canvas, g: Game, lp: LogoProvider, edge_spacing=0, offset=(0, 0)):
+def draw_logos(c: Canvas, g: Game, lp: LogoProvider, edge_spacing=0, offset=(0, 0), scale=1.0):
 
     # Moving forward *_b images are assumed to exist, *_ry are checked via os.path.exists()
 
-    factor = 0.65
-    new_size = (int(factor * c.display.size[0]), int(factor * c.display.size[1]))
+    new_size = (int(scale * c.display.size[0]), int(scale * c.display.size[1]))
+
     home_b_path, home_ry_path = lp.get_team_logo_path(g.home.id)
     home_b = Image.open(home_b_path)
     home_b.thumbnail(new_size)

@@ -4,7 +4,7 @@ import constants
 from datetime import datetime, timedelta
 import json
 import requests
-from game import Game
+from game import Game, GameStatus, GameDetails
 from display import *
 from utils import LogoProvider, FontProvider
 from canvas import Canvas
@@ -69,7 +69,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
         #response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=(60, 60))
         #data = json.loads(response.content)
 
-        f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res/debug/debug-mar09.json'))
+        f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.games.livecritical.json'))
         data = json.loads(f.read())
         f.close()
 
@@ -91,6 +91,13 @@ font_provider = FontProvider(resources_path)
 icon_provider = LogoProvider(id_to_abbr, resources_path)
 team_id = get_team_id('VGK')
 game = get_next_game(team_id, datetime.today())  # -/+ timedelta(days=1)
+
+if GameStatus.LIVE == game.status or GameStatus.LIVE_CRITICAL == game.status:
+    f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.game.period1.pp.json'))
+    details = GameDetails(json.loads(f.read()))
+    game.attach_details(details)
+    f.close()
+
 
 display = get_display()
 display.start()
