@@ -1,160 +1,69 @@
-from PIL import Image, ImageDraw, ImageFont
-from enum import Enum, auto
-from utils import FontProvider, LogoProvider
-import os
+from display import *
+from layout import *
+from utils import *
+from game import *
 
 
-class View:
-
-    def draw(self, im: Image, im_ry: Image = None):
-        raise NotImplementedError()
-
-    @staticmethod
-    def create_canvas(im: Image):
-        canvas = ImageDraw.Draw(im)
-        return canvas
-
-    @staticmethod
-    def xy(box, el, pos):
-
-        x, y = (0, 0)  # Assumed default of View.Pos.start for both x and y
-
-        delta_x = box[0] - el[0]
-        delta_y = box[1] - el[1]
-
-        if pos[0] is View.Pos.end:
-            x = delta_x
-        elif pos[0] is View.Pos.center:
-            x = delta_x / 2
-
-        if pos[1] is View.Pos.end:
-            y = delta_y
-        elif pos[1] is View.Pos.center:
-            y = delta_y / 2
-
-        return int(x), int(y)
-
-    class Pos(Enum):
-        start = auto()
-        center = auto()
-        end = auto()
+def get_ui_builder(d: BaseDisplay, fp: FontProvider, lp: LogoProvider, g: Game):
+    if GameStatus.FINAL == g.status:
+        return FinalGame(d, g, fp, lp)
 
 
-class TextView(View):
+class GameUiBuilder:
 
-    def __init__(self, text: str, font_provider: FontProvider, max_size=20,
-                 p=(View.Pos.center, View.Pos.center)):
+    def __init__(self, d: BaseDisplay, g: Game):
+        self.d = d
+        self.g = g
+        self.b = View.create_image(d.size)
+        self.ry = View.create_image(d.size)
 
-        self.t = text
-        self.fp = font_provider
-        self.ms = max_size
-        self.p = p
-
-    def get_font(self, s):
-        return ImageFont.truetype(self.fp.get_font_path_filename(), s)
-
-    def draw(self, im: Image, im_ry: Image = None):
-
-        canvas = View.create_canvas(im)
-        font_size = self.ms
-        font = self.get_font(font_size)
-        text_size = canvas.textsize(self.t, font)
-        while text_size[0] > 8 and text_size[1] > 8 \
-                and (text_size[0] > im.size[0] or text_size[1] > im.size[1]):
-            font_size -= 2
-            font = self.get_font(font_size)
-            text_size = canvas.textsize(self.t, font)
-
-        xy = View.xy(im.size, text_size, self.p)
-        canvas.multiline_text(xy, self.t, font=font, align='center')
+    def deploy(self):
+        self.d.update(self.b, self.ry)
 
 
-class ImagePathView(View):
+class FinalGame(GameUiBuilder):
 
-    def __init__(self, im_path: str, im_ry_path: str, p=(View.Pos.center, View.Pos.center)):
-        self.im_path = im_path
-        self.im_ry_path = im_ry_path
-        self.p = p
+    def __init__(self, d: BaseDisplay, g: Game, fp: FontProvider, lp: LogoProvider):
+        super().__init__(d, g)
+        self.fp = fp
+        self.lp = lp
 
-    def draw(self, im: Image, im_ry: Image = None):
-        im_b = Image.open(self.im_path)
-        new_max_size = (int(min(im.size[0], im_b.size[0])), int(min(im.size[1], im_b.size[1])))
-        im_b.thumbnail(new_max_size)
-        new_size = im_b.size
-        xy = View.xy(im.size, new_size, self.p)
-        im.paste(im_b, xy)
-        im_b.close()
+        logo_spacing = 0.05
+        away_b_path, away_ry_path = self.lp.get_team_logo_path(self.g.away.id)
+        away_record = f'{self.g.away.wins}-{self.g.away.losses}-{self.g.away.ot}'
+        away_column = LinearLayout([
+            SpacingLayout(logo_spacing, ImagePathView(away_b_path, away_ry_path)),
+            TextView(away_record, self.fp, p=View.center_end)
+        ], [3, 1], is_vertical=True)
 
-        if im_ry is not None and os.path.exists(self.im_ry_path):
-            im_ry = Image.open(self.im_ry_path)
-            im_ry.thumbnail(new_size)
-            im_ry.paste(im_ry, xy)
-            im_ry.close()
+        score_max_size = 45
+        scores = LinearLayout([
+            TextView(str(self.g.away.score), self.fp, max_size=score_max_size),
+            TextView('@', self.fp, max_size=25),
+            TextView(str(self.g.home.score), self.fp, max_size=score_max_size)
+        ], [2, 2, 2])
+        status = TextView('Final', fp, p=View.center_start)
+        score_column = LinearLayout([scores, status], [3, 2], is_vertical=True)
 
+        home_b_path, home_ry_path = self.lp.get_team_logo_path(self.g.home.id)
+        home_record = f'{self.g.home.wins}-{self.g.home.losses}-{self.g.home.ot}'
+        home_column = LinearLayout([
+            SpacingLayout(logo_spacing, ImagePathView(home_b_path, home_ry_path)),
+            TextView(home_record, self.fp, p=View.center_end)
+        ], [3, 1], is_vertical=True)
 
-class SpacingLayout(View):
-
-    def __init__(self, spacing_percent, child):
-        self.s = spacing_percent
-        self.c = child
-
-    def draw(self, im: Image, im_ry: Image = None):
-        x_space = int(im.size[0] * self.s)
-        y_space = int(im.size[1] * self.s)
-        xy = (x_space, y_space)
-        new_size = (int(im.size[0] - (x_space * 2)), int(im.size[1] - (y_space * 2)))
-        new_image = Image.new('1', new_size, 255)
-        new_image_ry = Image.new('1', new_size, 255)
-        self.c.draw(new_image, new_image_ry)
-        im.paste(new_image, xy)
-        if im_ry is not None:
-            im_ry.paste(new_image_ry, xy)
+        SpacingLayout(0.05, LinearLayout([away_column, score_column, home_column], [3, 4, 3])) \
+            .draw(self.b, self.ry)
 
 
-class LinearLayout(View):
+class RecordsRow(View):
+    def __init__(self, away: str, home: str, fp: FontProvider):
+        self.a = away
+        self.h = home
+        self.fp = fp
 
-    def __init__(self, children: [], weights: [int] = None, is_vertical=False):
-
-        if children is None or len(children) == 0:
-            raise ValueError('Missing children', children)
-
-        if weights is None:
-            weights = [1 for i in range(len(children))]
-
-        if len(children) != len(weights):
-            raise ValueError('Mismatch', len(children), len(weights))
-
-        self.children = children
-        self.weights = weights
-        self.weights_total = 0
-        self.is_vertical = is_vertical
-
-        for w in weights:
-            self.weights_total += w
-
-    def draw(self, im: Image, im_ry: Image = None):
-
-        x, y = (0, 0)
-        w, h = im.size
-        for i in range(len(self.children)):
-            c = self.children[i]
-            percent = self.weights[i] / self.weights_total
-
-            new_w = 0
-            new_h = 0
-            if self.is_vertical:
-                new_h = int(percent * h)
-                new_size = (w, new_h)
-            else:
-                new_w = int(percent * w)
-                new_size = (new_w, h)
-
-            new_image = Image.new('1', new_size, 255)
-            new_image_ry = Image.new('1', new_size, 255)
-            c.draw(new_image, new_image_ry)
-            im.paste(new_image, (x, y))
-            if im_ry is not None:
-                im_ry.paste(new_image_ry, (x, y))
-            x += new_w
-            y += new_h
-            del c, percent, new_w, new_h, new_size, new_image, new_image_ry
+    def draw(self, im_b: Image, im_ry: Image = None):
+        LinearLayout([
+            TextView(self.a, self.fp, p=View.start_center),
+            TextView(self.h, self.fp, p=View.end_center)
+        ]).draw(im_b, im_ry)

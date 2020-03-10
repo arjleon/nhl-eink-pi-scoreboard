@@ -45,6 +45,9 @@ class FakeEpd2in9bcDisplay(BaseDisplay):
     def __init__(self):
         super().__init__(296, 128)
         print(f'{self.__class__.__name__} init')
+        debug_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res', 'debug')
+        self.debug_path_b = os.path.join(debug_path, 'display-b.gif')
+        self.debug_path_ry = os.path.join(debug_path, 'display-ry.gif')
 
     def start(self):
         pass
@@ -53,12 +56,16 @@ class FakeEpd2in9bcDisplay(BaseDisplay):
         pass
 
     def clear(self):
-        pass
+        try:
+            os.remove(self.debug_path_b)
+            os.remove(self.debug_path_ry)
+        except:
+            pass
 
     def update(self, b, ry):
-        filename = 'display-b.gif'
-        path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res', 'debug', filename)
-        b.save(path)
+
+        b.save(self.debug_path_b)
+        ry.save(self.debug_path_ry)
 
 
 class Epd2in9bcDisplay(BaseDisplay):

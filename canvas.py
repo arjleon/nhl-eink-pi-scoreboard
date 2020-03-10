@@ -84,6 +84,13 @@ class LiveGame(Canvas):
     def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider):
         super().__init__(d, fp)
 
+
+
+class OldLiveGame(Canvas):
+
+    def __init__(self, d: BaseDisplay, fp: FontProvider, g: Game, lp: LogoProvider):
+        super().__init__(d, fp)
+
         logos_offset = (0, -int((0.2 * d.size[1])))
         draw_logos(self, g, lp, constants.CANVAS_LOGOS_EDGE_SPACING, logos_offset, scale=0.5)
 
