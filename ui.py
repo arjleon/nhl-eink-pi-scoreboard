@@ -5,7 +5,7 @@ from game import *
 
 
 def get_ui_builder(d: BaseDisplay, fp: FontProvider, lp: LogoProvider, g: Game):
-    if GameStatus.FINAL == g.status:
+    #if GameStatus.FINAL == g.status:
         return FinalGame(d, g, fp, lp)
 
 
@@ -42,7 +42,12 @@ class FinalGame(GameUiBuilder):
             TextView('@', self.fp, max_size=25),
             TextView(str(self.g.home.score), self.fp, max_size=score_max_size)
         ], [2, 2, 2])
-        status = TextView('Final', fp, p=View.center_start)
+
+        status_str = 'Final / '
+        if g.details.period > 3:
+            status_str += g.details.period_ordinal
+
+        status = TextView(status_str, fp, p=View.center_start)
         score_column = LinearLayout([scores, status], [3, 2], is_vertical=True)
 
         home_b_path, home_ry_path = self.lp.get_team_logo_path(self.g.home.id)

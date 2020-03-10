@@ -105,6 +105,7 @@ class Epd2in9bcDisplay(BaseDisplay):
 
     def update(self, b, ry):
         if self.epd and b and ry:
+            self.log.info(f'Updating {self.__class__.__name__}')
             self.epd.display(self.epd.getbuffer(b), self.epd.getbuffer(ry))
         else:
             self.log.error(f'Missing requirements for the display: ({self.epd}, {b}, {ry})')

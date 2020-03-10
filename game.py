@@ -31,7 +31,8 @@ class GameDetailsTeam:
 class GameDetails:
     def __init__(self, j):
         linescore = j['liveData']['linescore']
-        self.period = linescore['currentPeriodOrdinal']
+        self.period = linescore['currentPeriod']
+        self.period_ordinal = linescore['currentPeriodOrdinal']
         self.period_remaining = linescore['currentPeriodTimeRemaining']
         self.strength = linescore['powerPlayStrength']
         pp_info = linescore['powerPlayInfo']

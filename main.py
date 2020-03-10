@@ -63,6 +63,11 @@ def get_team_id(abbr):
     raise Exception('Team abbreviation is incorrect')
 
 
+def get_game_details(link: str):
+    response = requests.get(get_url(link), timeout=(60, 60))
+    return GameDetails(json.loads(response.content))
+
+
 def get_next_game(tid, date_time=datetime.today(), loop=0):
     while loop < constants.NEXT_GAME_CHECK_LIMIT:
         team_arg = f'teamId={tid}'
@@ -92,20 +97,21 @@ res_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
 fp = FontProvider(res_path)
 lp = LogoProvider(id_to_abbr, res_path)
 team_id = get_team_id('VGK')
-game = get_next_game(team_id, datetime.today() - timedelta(hours=2))  # -/+ timedelta(days=1)
+game = get_next_game(team_id, datetime.today())  # -/+ timedelta(days=1)
 
-if GameStatus.LIVE == game.status or GameStatus.LIVE_CRITICAL == game.status:
-    f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.game.period1.pp.json'))
-    details = GameDetails(json.loads(f.read()))
+if GameStatus.LIVE == game.status \
+        or GameStatus.LIVE_CRITICAL == game.status \
+        or GameStatus.FINAL == game.status:
+
+    details = get_game_details(game.link)
     game.attach_details(details)
-    f.close()
 
 d = get_display()
 d.start()
 d.clear()
 
 try:
-    get_ui_builder(d, fp, lp, game) \
+    get_ui_builder(d, fp, lp, game)\
         .deploy()
 finally:
     d.stop()

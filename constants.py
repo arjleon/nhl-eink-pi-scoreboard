@@ -1,7 +1,7 @@
 API_DATE_FORMAT = '%Y-%m-%d'
-API_BASE = 'http://statsapi.web.nhl.com/api/v1/'
-API_SCHEDULE = 'schedule?'
-API_TEAMS = 'teams'
+API_BASE = 'http://statsapi.web.nhl.com/'
+API_SCHEDULE = 'api/v1/schedule?'
+API_TEAMS = 'api/v1/teams'
 
 FILE_TEAMS = 'teams'
 

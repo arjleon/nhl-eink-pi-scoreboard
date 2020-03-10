@@ -96,7 +96,8 @@ class MyTestCase(unittest.TestCase):
     def test_detailedgame_period(self):
         d = get_detailed_game_from_file('tests.game.period1.pp.json')
 
-        self.assertEqual('1st', d.period)
+        self.assertEqual(1, d.period)
+        self.assertEqual('1st', d.period_ordinal)
         self.assertEqual('04:11', d.period_remaining)
 
     def test_detailedgame_pp(self):
@@ -138,46 +139,6 @@ class MyTestCase(unittest.TestCase):
         self.assertFalse(d.away.goalie_pulled)
         self.assertEqual(6, d.home.num_skaters)
         self.assertEqual(5, d.away.num_skaters)
-
-    def tests_ui(self):
-        display = (296, 128)
-        im = Image.new('1', display, 255)
-        im_ry = Image.new('1', display, 255)
-
-        id_abbr = {54: 'vgk', 20: 'cgy', 22: 'edm', 7: 'buf'}
-        resources_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'res')
-        font_provider = utils.FontProvider(resources_path)
-        logo_provider = utils.LogoProvider(id_abbr, resources_path)
-
-        g = get_game_from_file('tests.games.final.json')
-
-        d = get_display()
-        d.start()
-
-        builder = get_ui_builder(d, font_provider, logo_provider, g)
-        builder.deploy()
-
-        # b, ry = logo_provider.get_team_logo_path(54)
-        # b2, ry2 = logo_provider.get_team_logo_path(20)
-        #
-        # left_top = (View.Pos.start, View.Pos.start)
-        # right_top = (View.Pos.end, View.Pos.start)
-        # center_top = (View.Pos.center, View.Pos.start)
-        # SpacingLayout(0.02,
-        #               LinearLayout(
-        #                   [LinearLayout(
-        #                       [ImagePathView(b, ry, p=left_top),
-        #                        TextView('1', font_provider, max_size=60),
-        #                        TextView('1st\n04:11', font_provider, max_size=18),
-        #                        TextView('2', font_provider, max_size=60),
-        #                        ImagePathView(b2, ry2, p=right_top)],
-        #                       [5, 2, 3, 2, 5]),
-        #                    TextView('PP', font_provider, invert_colors=True)],
-        #                   [6, 4],
-        #                   is_vertical=True)) \
-        #     .draw(im, im_ry)
-        # im.save('ll-test-b.gif')
-        # im_ry.save('ll-test-ry.gif')
 
 
 def get_game_from_file(filename):
