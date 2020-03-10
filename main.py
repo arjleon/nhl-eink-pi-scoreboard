@@ -92,7 +92,7 @@ res_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
 fp = FontProvider(res_path)
 lp = LogoProvider(id_to_abbr, res_path)
 team_id = get_team_id('VGK')
-game = get_next_game(team_id, datetime.today())  # -/+ timedelta(days=1)
+game = get_next_game(team_id, datetime.today() - timedelta(hours=2))  # -/+ timedelta(days=1)
 
 if GameStatus.LIVE == game.status or GameStatus.LIVE_CRITICAL == game.status:
     f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.game.period1.pp.json'))
