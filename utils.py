@@ -16,7 +16,9 @@ def get_friendly_game_time(g: Game, now_utc: datetime = datetime.now(timezone.ut
     friendly_tz = game_local.strftime('%Z')
 
     # Measure difference in days based on provided 'now'
-    days_delta = (g.datetime_utc - now_utc).days
+    normalized_game_utc = datetime(g.datetime_utc.year, g.datetime_utc.month, g.datetime_utc.day)
+    normalized_now_utc = datetime(now_utc.year, now_utc.month, now_utc.day)
+    days_delta = (normalized_game_utc - normalized_now_utc).days
 
     # Create friendly version of the day
     days = {0: 'Today', 1: 'Tomorrow'}

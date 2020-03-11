@@ -10,6 +10,7 @@ from utils import LogoProvider, FontProvider
 from ui import get_ui_builder
 import os
 from time import sleep
+import pytz
 
 
 def write_file(filename, content):
@@ -31,18 +32,24 @@ def get_url(endpoint, *args):
 
 def get_teams():
     filename = constants.FILE_TEAMS + '.json'
+
+    for f in [f'../{filename}', filename]:
+        if os.path.exists(f):
+            print(f'Teams data exists in {f}')
+            return json.loads(read_file(f))
+
     if os.path.exists(filename):
         print('Teams data exists')
         return json.loads(read_file(filename))
+
+    print('Fetching teams data')
+    response = requests.get(get_url(constants.API_TEAMS))
+    if response:
+        text = response.text
+        write_file(filename, text)
+        return json.loads(text)
     else:
-        print('Fetching teams data')
-        response = requests.get(get_url(constants.API_TEAMS))
-        if response:
-            text = response.text
-            write_file(filename, text)
-            return json.loads(text)
-        else:
-            raise Exception('No teams data available')
+        raise Exception('No teams data available')
 
 
 def get_abbreviations(data):
@@ -76,7 +83,7 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
         response = requests.get(get_url(constants.API_SCHEDULE, team_arg, date_arg), timeout=(60, 60))
         data = json.loads(response.content)
 
-        # f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.games.livecritical.json'))
+        # f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.games.live.json'))
         # data = json.loads(f.read())
         # f.close()
 
@@ -88,22 +95,27 @@ def get_next_game(tid, date_time=datetime.today(), loop=0):
             pause = 1
             print(f'({loop}) No games, checking next day in {pause}s...')
             sleep(pause)
-            return get_next_game(tid, date_time + timedelta(days=1))
+            return get_next_game(tid, date_time + timedelta(days=1), loop + 1)
     raise Exception(f'({loop}) Error, could not find the next match')
 
 
-id_to_abbr = get_abbreviations(get_teams())
+team_data = get_teams()
+id_to_abbr = get_abbreviations(team_data)
 res_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'res')
 fp = FontProvider(res_path)
 lp = LogoProvider(id_to_abbr, res_path)
-team_id = get_team_id('VGK')
-game = get_next_game(team_id, datetime.today())  # -/+ timedelta(days=1)
+team_id = get_team_id(constants.FAVORITE_TEAM)
+# -/+ timedelta(days=1)
+game = get_next_game(team_id, datetime.today().astimezone(tz=pytz.timezone(constants.TIMEZONE)))
 
 if GameStatus.LIVE == game.status \
         or GameStatus.LIVE_CRITICAL == game.status \
         or GameStatus.FINAL == game.status:
 
     details = get_game_details(game.link)
+    # j = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/tests.game.period1.pp.json'))
+    # details = GameDetails(json.loads(j.read()))
+    # j.close()
     game.attach_details(details)
 
 d = get_display()

@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class GameStatus(enum.Enum):
+    UNEXPECTED = -1
     SCHEDULED = 1
     LIVE = 3
     LIVE_CRITICAL = 4
@@ -50,7 +51,13 @@ class Game:
     def __init__(self, j):
         self.id = j['gamePk']
         self.datetime_utc = datetime.fromisoformat(j['gameDate'].replace('Z', '+00:00'))
-        self.status = GameStatus(int(j['status']['statusCode']))
+        status_code = int(j['status']['statusCode'])
+        self.original_status = status_code
+        try:
+            self.status = GameStatus(status_code)
+        except ValueError:
+            self.status = GameStatus.UNEXPECTED
+
         self.link = j['link']
         j_teams = j['teams']
         self.home = Team(j_teams['home'])

@@ -1,12 +1,6 @@
 import unittest
 import main
 import json
-from game import Game, GameStatus, GameDetails, GameDetailsTeam
-import utils
-import pytz
-from datetime import timedelta
-from layout import *
-import os
 from ui import *
 
 
@@ -67,40 +61,54 @@ class MyTestCase(unittest.TestCase):
         self.assertFalse(g.is_time_tbd)
 
     def test_friendly_today_utc(self):
-        g = get_game_from_file('tests.games.scheduled.json')
-        now_utc = g.datetime_utc - timedelta(hours=23)  # Diff of less than a day
+        g = get_game_from_file('tests.games.live.json')
+        # Diff keeps it the same day UTC:
+        now_utc = g.datetime_utc - timedelta(hours=16)
         day, time, tz = utils.get_friendly_game_time(g, now_utc)
 
         self.assertEqual('Today', day)
-        self.assertEqual('12:00AM', time)  # As defined in the input test file
+        self.assertEqual('7:00PM', time)  # As defined in the input test file
         self.assertEqual('UTC', tz)  # As no tz was provided
 
     def test_friendly_tomorrow_us_pacific(self):
-        g = get_game_from_file('tests.games.scheduled.json')
-        now_utc = g.datetime_utc - timedelta(days=1, hours=20)  # Diff over 1 day, less than 2
+        g = get_game_from_file('tests.games.livecritical.json')
+        # Diff makes it one day apart US Pacific:
+        now_utc = g.datetime_utc - timedelta(days=1, hours=13)
+
         day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Pacific'))
 
         self.assertEqual('Tomorrow', day)
-        self.assertEqual('4:00PM', time)  # As defined in the input test file
+        self.assertEqual('10:00AM', time)  # As defined in the input test file
         self.assertEqual('PST', tz)  # As no tz was provided
 
     def test_friendly_mmdd_us_eastern(self):
         g = get_game_from_file('tests.games.scheduled.json')
-        now_utc = g.datetime_utc - timedelta(days=5)  # Diff over 2 day
+        # Diff over 2 day US Eastern:
+        now_utc = g.datetime_utc - timedelta(days=5)
         day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Eastern'))
 
         self.assertEqual('Sat, Feb/01', day)
         self.assertEqual('7:00PM', time)  # As defined in the input test file
         self.assertEqual('EST', tz)  # As no tz was provided
 
-    def test_detailedgame_period(self):
+    def test_friendly_dayaftertomorrow_45hours_us_pacific(self):
+        g = get_game_from_file('tests.games.scheduled.json')
+        # Diff is not strictly 48 hours but still day after tomorrow US Pac:
+        now_utc = g.datetime_utc - timedelta(hours=45)
+        day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Pacific'))
+
+        self.assertEqual('Sat, Feb/01', day)
+        self.assertEqual('4:00PM', time)  # As defined in the input test file
+        self.assertEqual('PST', tz)  # As no tz was provided
+
+    def test_live_period(self):
         d = get_detailed_game_from_file('tests.game.period1.pp.json')
 
         self.assertEqual(1, d.period)
         self.assertEqual('1st', d.period_ordinal)
         self.assertEqual('04:11', d.period_remaining)
 
-    def test_detailedgame_pp(self):
+    def test_live_pp(self):
         d = get_detailed_game_from_file('tests.game.period1.pp.json')
 
         self.assertTrue(d.in_pp)
@@ -108,7 +116,7 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(d.home.in_pp)
         self.assertFalse(d.away.in_pp)
 
-    def test_detailedgame_4on4(self):
+    def test_live_4on4(self):
         d = get_detailed_game_from_file('tests.game.4on4.json')
 
         self.assertTrue(d.in_pp)
@@ -119,26 +127,51 @@ class MyTestCase(unittest.TestCase):
         self.assertFalse(d.home.goalie_pulled)
         self.assertFalse(d.away.goalie_pulled)
 
-    def tests_detailedgame_nointermission(self):
+    def test_live_nointermission(self):
         d1 = get_detailed_game_from_file('tests.game.4on4.json')
 
         self.assertFalse(d1.in_intermission)
         self.assertEqual(0, d1.intermission_remaining_seconds)
 
-    def tests_detailedgame_intermission(self):
+    def test_live_intermission(self):
         d2 = get_detailed_game_from_file('tests.game.intermission.json')
 
         self.assertTrue(d2.in_intermission)
         self.assertIsNotNone(d2.intermission_remaining_seconds)
         self.assertEqual(1000, d2.intermission_remaining_seconds)
 
-    def tests_detailedgame_emptynet(self):
+    def test_live_emptynet(self):
         d = get_detailed_game_from_file('tests.game.emptynet.json')
 
         self.assertTrue(d.home.goalie_pulled)
         self.assertFalse(d.away.goalie_pulled)
         self.assertEqual(6, d.home.num_skaters)
         self.assertEqual(5, d.away.num_skaters)
+
+    def test_pp_second_conversion_seconds(self):
+        seconds = 15
+        formatted = utils.pp_seconds_to_friendly(seconds)
+        self.assertEqual('0:15', formatted)
+
+    def test_pp_second_conversion_minute(self):
+        seconds = 60
+        formatted = utils.pp_seconds_to_friendly(seconds)
+        self.assertEqual('1:00', formatted)
+
+    def test_pp_second_conversion_minutes(self):
+        seconds = 70
+        formatted = utils.pp_seconds_to_friendly(seconds)
+        self.assertEqual('1:10', formatted)
+
+    def test_pp_second_conversion_minutes_seconds(self):
+        seconds = 147
+        formatted = utils.pp_seconds_to_friendly(seconds)
+        self.assertEqual('2:27', formatted)
+
+    def test_pp_second_conversion_5minmajor(self):
+        seconds = 300
+        formatted = utils.pp_seconds_to_friendly(seconds)
+        self.assertEqual('5:00', formatted)
 
 
 def get_game_from_file(filename):

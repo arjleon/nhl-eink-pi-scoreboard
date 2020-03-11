@@ -15,7 +15,6 @@ except OSError:
 
 
 def get_display():
-
     try:
         return Epd2in9bcDisplay()
     except NameError:
@@ -56,6 +55,7 @@ class FakeEpd2in9bcDisplay(BaseDisplay):
         pass
 
     def clear(self):
+
         try:
             os.remove(self.debug_path_b)
             os.remove(self.debug_path_ry)
