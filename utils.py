@@ -4,6 +4,16 @@ from datetime import datetime, timezone, tzinfo, timedelta
 from game import Game
 
 
+def write_file(filename, content):
+    with open(filename, 'w') as file:
+        file.write(content)
+
+
+def read_file(filename):
+    with open(filename, 'r') as file:
+        return file.read()
+
+
 def get_friendly_game_time(g: Game, now_utc: datetime = datetime.now(timezone.utc),
                            to_tz: tzinfo = timezone.utc):
 

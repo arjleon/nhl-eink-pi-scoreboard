@@ -3,7 +3,7 @@ from layout import *
 from utils import *
 from game import *
 import pytz
-import constants
+import config
 import utils
 
 
@@ -113,7 +113,7 @@ class ScheduledGame(GameUiBuilder):
             TeamRecord(self.g.away, self.fp, p=View.center_end)
         ], icon_record_weights, is_vertical=True)
 
-        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone(constants.TIMEZONE))
+        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone(config.TIMEZONE))
         text = f'\n@\n\n{day}\n{time}\n({tz})'
         date_time_column = TextView(text, self.fp)
 
@@ -166,7 +166,7 @@ class UnexpectedGame(GameUiBuilder):
     def __init__(self, d: BaseDisplay, g: Game, fp: FontProvider, lp: LogoProvider):
         super().__init__(d, g)
 
-        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone(constants.TIMEZONE))
+        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone(config.TIMEZONE))
         date_time = TextView(f'\n@\n\n{day}\n{time}\n({tz})', fp)
 
         message = f'Unexpected game (status={self.g.original_status})'
