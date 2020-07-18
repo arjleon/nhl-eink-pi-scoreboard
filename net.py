@@ -7,15 +7,15 @@ from datetime import datetime, timedelta
 from time import sleep
 
 API_BASE_URL = 'http://statsapi.web.nhl.com'
-API_SCHEDULE = '/api/v1/schedule'
-API_TEAMS = '/api/v1/teams'
+API_SCHEDULE = 'api/v1/schedule'
+API_TEAMS = 'api/v1/teams'
 API_DATE_FORMAT = '%Y-%m-%d'
 
 
 class NhlApi:
 
     def __init__(self, check_days_limit: int = 10):
-        self.options = (60, 60)
+        self.timeouts = (60, 60)
         self.check_limit = check_days_limit
         teams = NhlApi.get_teams_data(self)
         self.abbrs = self.__get_teams_abbreviations(teams)
@@ -50,7 +50,7 @@ class NhlApi:
             raise Exception('No teams data available')
 
     def get(self, url):
-        return requests.get(url, self.options)
+        return requests.get(url, timeout=self.timeouts)
 
     @staticmethod
     def __get_teams_abbreviations(teams_data):

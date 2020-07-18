@@ -12,9 +12,10 @@ from net import NhlApi, DebugNhlApi
 
 curr_dir = os.path.dirname(os.path.realpath(__file__))
 
-if config.DEBUG_GAME is not None and config.DEBUG_GAME_DETAILS is not None:
-    api = DebugNhlApi(os.path.join(curr_dir, config.DEBUG_GAME),
-                      os.path.join(curr_dir, config.DEBUG_GAME_DETAILS))
+if config.DEBUG_ENABLED is True:
+    debugGame = os.path.join(curr_dir, config.DEBUG_GAME)
+    debugDetails = os.path.join(curr_dir, config.DEBUG_GAME_DETAILS) if config.DEBUG_GAME_DETAILS is not None else None
+    api = DebugNhlApi(debugGame, debugDetails)
 else:
     api = NhlApi()
 

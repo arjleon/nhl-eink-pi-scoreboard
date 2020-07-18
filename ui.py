@@ -18,6 +18,9 @@ def get_ui_builder(d: BaseDisplay, fp: FontProvider, lp: LogoProvider, g: Game):
     elif GameStatus.SCHEDULED == g.status:
         return ScheduledGame(d, g, fp, lp)
 
+    elif GameStatus.SCHEDULED_TIMETBD == g.status:
+        return ScheduledTimeTbdGame(d, g, fp, lp)
+
     else:
         return UnexpectedGame(d, g, fp, lp)
 
@@ -113,8 +116,7 @@ class ScheduledGame(GameUiBuilder):
             TeamRecord(self.g.away, self.fp, p=View.center_end)
         ], icon_record_weights, is_vertical=True)
 
-        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone(config.TIMEZONE))
-        text = f'\n@\n\n{day}\n{time}\n({tz})'
+        text = self.get_time(g)
         date_time_column = TextView(text, self.fp)
 
         home_column = LinearLayout([
@@ -124,6 +126,22 @@ class ScheduledGame(GameUiBuilder):
 
         LinearLayout([away_column, date_time_column, home_column], [3, 4, 3]) \
             .draw(self.b, self.ry)
+
+    def get_time(self, g):
+        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone(config.TIMEZONE))
+        return f'\n@\n\n{day}\n{time}\n({tz})'
+
+
+class ScheduledTimeTbdGame(ScheduledGame):
+
+    def __init__(self, d: BaseDisplay, g: Game, fp: FontProvider, lp: LogoProvider):
+        super().__init__(d, g, fp, lp)
+
+    def get_time(self, g):
+        # Time is TBD, force-add 3 hours to show correct day of game in most continental US timezones
+        g.datetime_utc += timedelta(hours=3)
+        day, time, tz = get_friendly_game_time(g, to_tz=pytz.timezone(config.TIMEZONE))
+        return f'\n@\n\n{day}\nTime TBD'
 
 
 class FinalGame(GameUiBuilder):
@@ -194,7 +212,13 @@ class Empty(View):
 
 class TeamRecord(View):
     def __init__(self, t: Team, fp: FontProvider, p=View.center_center):
-        self.r = f'({t.wins}-{t.losses}-{t.ot})'
+
+        record = f'{t.wins}-{t.losses}'
+
+        if t.ot is not None:
+            record = record + f'-{t.ot}'
+
+        self.r = f'({record})'
         self.fp = fp
         self.p = p
 

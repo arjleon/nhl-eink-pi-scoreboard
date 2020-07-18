@@ -5,6 +5,7 @@ from datetime import datetime
 class GameStatus(enum.Enum):
     UNEXPECTED = -1
     SCHEDULED = 1
+    SCHEDULED_TIMETBD = 8
     LIVE = 3
     LIVE_CRITICAL = 4
     FINAL = 7
@@ -19,7 +20,13 @@ class Team:
         record = j['leagueRecord']
         self.wins = record['wins']
         self.losses = record['losses']
-        self.ot = record['ot']
+
+        # Playoffs have no OT record
+
+        try:
+            self.ot = record['ot']
+        except KeyError:
+            self.ot = None
 
 
 class GameDetailsTeam:
