@@ -2,21 +2,28 @@ import unittest
 import main
 import json
 from ui import *
+from net import NhlApi
+from datetime import datetime, timedelta
+from display import get_display
+from utils import LogoProvider, FontProvider
+from ui import get_ui_builder
+import os
+import pytz
 
 
 class MyTestCase(unittest.TestCase):
     def test_url_endpoint(self):
-        url = main.get_url('test')
+        url = NhlApi.build_url('test')
         self.assertIsNotNone(url)
         self.assertTrue(url.endswith('/test?'))
 
     def test_url_endpoint_1arg(self):
-        url = main.get_url('test', 'k1=v1')
-        self.assertTrue(url.endswith('/test?&k1=v1'))
+        url = NhlApi.build_url('test', 'k1=v1')
+        self.assertTrue(url.endswith('/test?k1=v1'))
 
     def test_url_endpoint_2arg(self):
-        url = main.get_url('test', 'k1=v1', 'a=b')
-        self.assertTrue(url.endswith('/test?&k1=v1&a=b'))
+        url = NhlApi.build_url('test', 'k1=v1', 'a=b')
+        self.assertTrue(url.endswith('/test?k1=v1&a=b'))
 
     def test_json_parsing(self):
         g = get_game_from_file('tests.games.live.json')
