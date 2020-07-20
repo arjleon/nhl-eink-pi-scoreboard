@@ -30,7 +30,7 @@ game = None
 try:
     game = api.get_next_game(fav_team_id, game_date)  # -/+ timedelta(days=1)
 except NoUpcomingGameError:
-    pass
+    print('No upcoming game was found')
 
 d = get_display()
 d.start()

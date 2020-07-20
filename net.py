@@ -97,7 +97,7 @@ class NhlApi:
                 print(f'No games, checking next day in {seconds}s... ({loop})')
                 sleep(seconds)
                 return self.get_next_game(tid, date_time + timedelta(days=1), loop + 1)
-        raise Exception(f'({loop}) Error, could not find the next match')
+        raise NoUpcomingGameError()
 
 
 class DebugNhlApi(NhlApi):
