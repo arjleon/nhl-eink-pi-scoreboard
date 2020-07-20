@@ -17,7 +17,7 @@ if config.DEBUG_ENABLED is True:
     debugDetails = os.path.join(curr_dir, config.DEBUG_GAME_DETAILS) if config.DEBUG_GAME_DETAILS is not None else None
     api = DebugNhlApi(debugGame, debugDetails)
 else:
-    api = NhlApi()
+    api = NhlApi(config.CHECK_LIMIT_DAYS)
 
 res_path = os.path.join(curr_dir, 'res')
 fp = FontProvider(res_path)
