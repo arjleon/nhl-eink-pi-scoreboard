@@ -8,7 +8,7 @@ from utils import LogoProvider, FontProvider
 from ui import get_ui_builder
 import os
 import pytz
-from net import NhlApi, DebugNhlApi
+from net import NhlApi, DebugNhlApi, NoUpcomingGameError
 
 curr_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -25,7 +25,12 @@ lp = LogoProvider(api.abbrs, res_path)
 
 fav_team_id = api.get_team_id(config.FAVORITE_TEAM)
 game_date = datetime.today().astimezone(tz=pytz.timezone(config.TIMEZONE))
-game = api.get_next_game(fav_team_id, game_date)  # -/+ timedelta(days=1)
+
+game = None
+try:
+    game = api.get_next_game(fav_team_id, game_date)  # -/+ timedelta(days=1)
+except NoUpcomingGameError:
+    pass
 
 d = get_display()
 d.start()

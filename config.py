@@ -1,6 +1,7 @@
 # User settings
-FAVORITE_TEAM = "VGK"
+FAVORITE_TEAM = 'VGK'
 TIMEZONE = 'US/Pacific'
+CHECK_LIMIT_DAYS = 10
 
 # Debug
 DEBUG_ENABLED = False

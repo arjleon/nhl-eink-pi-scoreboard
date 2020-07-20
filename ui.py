@@ -9,7 +9,10 @@ import utils
 
 def get_ui_builder(d: BaseDisplay, fp: FontProvider, lp: LogoProvider, g: Game):
 
-    if GameStatus.FINAL == g.status:
+    if g is None:
+        return NoGame(d, fp)
+
+    elif GameStatus.FINAL == g.status:
         return FinalGame(d, g, fp, lp)
 
     elif GameStatus.LIVE == g.status or GameStatus.LIVE_CRITICAL == g.status:
@@ -35,6 +38,19 @@ class GameUiBuilder:
 
     def deploy(self):
         self.d.update(self.b, self.ry)
+
+
+class NoGame(GameUiBuilder):
+
+    def __init__(self, d: BaseDisplay, fp: FontProvider):
+        # noinspection PyTypeChecker
+        super().__init__(d, g=None)
+
+        message = 'No upcoming games'
+
+        SpacingLayout(0.05,
+                      TextView(message, fp)) \
+            .draw(self.b, self.ry)
 
 
 class LiveGame(GameUiBuilder):

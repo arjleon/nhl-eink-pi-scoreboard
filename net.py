@@ -14,9 +14,9 @@ API_DATE_FORMAT = '%Y-%m-%d'
 
 class NhlApi:
 
-    def __init__(self, check_days_limit: int = 10):
+    def __init__(self, check_limit_days: int = 3):
         self.timeouts = (60, 60)
-        self.check_limit = check_days_limit
+        self.check_limit = check_limit_days
         teams = NhlApi.get_teams_data(self)
         self.abbrs = self.__get_teams_abbreviations(teams)
 
@@ -123,3 +123,9 @@ class DebugNhlApi(NhlApi):
             game.attach_details(details)
 
         return game
+
+
+class NoUpcomingGameError(Exception):
+
+    def __init__(self):
+        pass
