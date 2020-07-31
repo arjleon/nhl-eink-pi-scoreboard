@@ -8,8 +8,7 @@ class GameStatus(enum.Enum):
     SCHEDULED_TIMETBD = 8
     LIVE = 3
     LIVE_CRITICAL = 4
-    FINAL = 7
-
+    FINAL = 6
 
 class Team:
     def __init__(self, j):
