@@ -10,6 +10,7 @@ class GameStatus(enum.Enum):
     LIVE_CRITICAL = 4
     FINAL = 6
 
+
 class Team:
     def __init__(self, j):
         self.score = j['score']
