@@ -12,7 +12,7 @@ def get_ui_builder(d: BaseDisplay, fp: FontProvider, lp: LogoProvider, g: Game):
     if g is None:
         return NoGame(d, fp)
 
-    elif GameStatus.FINAL == g.status:
+    elif GameStatus.FINAL == g.status or GameStatus.FINAL_ALT == g.status:
         return FinalGame(d, g, fp, lp)
 
     elif GameStatus.LIVE == g.status or GameStatus.LIVE_CRITICAL == g.status:
@@ -181,7 +181,7 @@ class FinalGame(GameUiBuilder):
         ], [2, 2, 2])
 
         status_str = 'Final'
-        if g.details.period > 3:
+        if g.details is not None and g.details.period > 3:
             status_str += f'/{g.details.period_ordinal}'
 
         status = TextView(status_str, fp, p=View.center_start)

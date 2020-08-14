@@ -9,6 +9,7 @@ class GameStatus(enum.Enum):
     LIVE = 3
     LIVE_CRITICAL = 4
     FINAL = 6
+    FINAL_ALT = 7
 
 
 class Team:
