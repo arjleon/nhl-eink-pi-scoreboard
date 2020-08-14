@@ -5,7 +5,8 @@ import config
 from datetime import datetime, timedelta
 from display import get_display
 from utils import LogoProvider, FontProvider
-from ui import get_ui_builder
+from ui import get_ui_builder, GameStatus
+from time import sleep
 import os
 import pytz
 from net import NhlApi, DebugNhlApi, NoUpcomingGameError
@@ -26,18 +27,30 @@ lp = LogoProvider(api.abbrs, res_path)
 fav_team_id = api.get_team_id(config.FAVORITE_TEAM)
 game_date = datetime.today().astimezone(tz=pytz.timezone(config.TIMEZONE))
 
-game = None
-try:
-    game = api.get_next_game(fav_team_id, game_date)  # -/+ timedelta(days=1)
-except NoUpcomingGameError:
-    print('No upcoming game was found')
+# Loop if the game is live
+while True:
 
-d = get_display()
-d.start()
-d.clear()
+    game = None
+    try:
+        game = api.get_next_game(fav_team_id, game_date)  # -/+ timedelta(days=1)
+    except NoUpcomingGameError:
+        print('No upcoming game was found')
 
-try:
-    get_ui_builder(d, fp, lp, game)\
-        .deploy()
-finally:
-    d.stop()
+    is_live = game is not None \
+        and (GameStatus.LIVE == game.status
+             or GameStatus.LIVE_CRITICAL == game.status)
+
+    d = get_display()
+    d.start()
+    d.clear()
+
+    try:
+        get_ui_builder(d, fp, lp, game) \
+            .deploy()
+    finally:
+        d.stop()
+
+    if is_live is True:
+        sleep(config.CHECK_UPDATE_LIVE_GAME_SECONDS)
+    else:
+        break
