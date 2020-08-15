@@ -19,6 +19,7 @@ def get_friendly_game_time(g: Game, now_utc: datetime = datetime.now(timezone.ut
 
     # Convert from UTC to provided tz
     game_local = g.datetime_utc.astimezone(to_tz)
+    now_local = now_utc.astimezone(to_tz)
 
     # Create friendly versions of time and tz
     friendly_time = game_local.strftime('%I:%M%p')
@@ -26,9 +27,9 @@ def get_friendly_game_time(g: Game, now_utc: datetime = datetime.now(timezone.ut
     friendly_tz = game_local.strftime('%Z')
 
     # Measure difference in days based on provided 'now'
-    normalized_game_utc = datetime(g.datetime_utc.year, g.datetime_utc.month, g.datetime_utc.day)
-    normalized_now_utc = datetime(now_utc.year, now_utc.month, now_utc.day)
-    days_delta = (normalized_game_utc - normalized_now_utc).days
+    normalized_game_local = datetime(game_local.year, game_local.month, game_local.day)
+    normalized_now_local = datetime(now_local.year, now_local.month, now_local.day)
+    days_delta = (normalized_game_local - normalized_now_local).days
 
     # Create friendly version of the day
     days = {0: 'Today', 1: 'Tomorrow'}

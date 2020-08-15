@@ -62,9 +62,9 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(g.status, GameStatus.LIVE_CRITICAL)
         self.assertFalse(g.is_time_tbd)
 
-    def test_json_final_game(self):
+    def test_json_final_alt_game(self):
         g = get_game_from_file('tests.games.final.json')
-        self.assertEqual(g.status, GameStatus.FINAL)
+        self.assertEqual(g.status, GameStatus.FINAL_ALT)
         self.assertFalse(g.is_time_tbd)
 
     def test_friendly_today_utc(self):
@@ -77,10 +77,21 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual('7:00PM', time)  # As defined in the input test file
         self.assertEqual('UTC', tz)  # As no tz was provided
 
-    def test_friendly_tomorrow_us_pacific(self):
+    def test_friendly_tomorrow_below12hours_us_pacific(self):
         g = get_game_from_file('tests.games.livecritical.json')
         # Diff makes it one day apart US Pacific:
-        now_utc = g.datetime_utc - timedelta(days=1, hours=13)
+        now_utc = g.datetime_utc - timedelta(hours=11)
+
+        day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Pacific'))
+
+        self.assertEqual('Tomorrow', day)
+        self.assertEqual('10:00AM', time)  # As defined in the input test file
+        self.assertEqual('PST', tz)  # As no tz was provided
+
+    def test_friendly_tomorrow_over24hours_us_pacific(self):
+        g = get_game_from_file('tests.games.livecritical.json')
+        # Diff makes it one day apart US Pacific:
+        now_utc = g.datetime_utc - timedelta(days=1, hours=9)
 
         day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Pacific'))
 
@@ -98,9 +109,9 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual('7:00PM', time)  # As defined in the input test file
         self.assertEqual('EST', tz)  # As no tz was provided
 
-    def test_friendly_dayaftertomorrow_45hours_us_pacific(self):
+    def test_friendly_dayaftertomorrow_below48hours_us_pacific(self):
         g = get_game_from_file('tests.games.scheduled.json')
-        # Diff is not strictly 48 hours but still day after tomorrow US Pac:
+        # Diff is not strictly 48 hours but still day after tomorrow for US Pacific timezone:
         now_utc = g.datetime_utc - timedelta(hours=45)
         day, time, tz = utils.get_friendly_game_time(g, now_utc, pytz.timezone('US/Pacific'))
 
