@@ -112,6 +112,22 @@ class ImagePathView(View):
             _im_ry.close()
 
 
+class MissingDataView(View):
+
+    def draw(self, im: Image, im_ry: Image = None):
+        canvas = View.create_canvas(im)
+        fill = 0
+        width = 3
+        # Sides
+        canvas.line([(0, 0), (im.width, 0)], fill, width)
+        canvas.line([(0, 0), (0, im.height)], fill, width)
+        canvas.line([(0, im.height), (im.width, im.height)], fill, width)
+        canvas.line([(im.width, 0), (im.width, im.height)], fill, width)
+        # Diagonals
+        canvas.line([(0, 0), (im.width, im.height)], fill, width)
+        canvas.line([(im.width, 0), (0, im.height)], fill, width)
+
+
 class SpacingLayout(View):
 
     def __init__(self, spacing_percent, child):
